@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+}
+
+@theme {
+  /* Modern SaaS Palette */
+  --color-primary: #4f46e5;
+  /* Indigo 600 */
+  --color-primary-foreground: #ffffff;
+  --color-primary-dark: #4338ca;
+  /* Indigo 700 */
+
+  --color-secondary: #0f172a;
+  /* Slate 900 */
+  --color-secondary-foreground: #f8fafc;
+
+  --color-accent: #10b981;
+  /* Emerald 500 */
+  --color-accent-foreground: #ffffff;
+
+  --color-background: #f8fafc;
+  /* Slate 50 */
+  --color-surface: #ffffff;
+  /* White */
+
+  --color-muted: #f1f5f9;
+  /* Slate 100 */
+  --color-muted-foreground: #64748b;
+  /* Slate 500 */
+
+  --color-card: #ffffff;
+  --color-card-foreground: #1e293b;
+
+  --color-popover: #ffffff;
+  --color-popover-foreground: #1e293b;
+
+  --color-border: #e2e8f0;
+  /* Slate 200 */
+  --color-input: #e2e8f0;
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+}
+
+:root {
+  /* Fallback/Derived variables if needed, or legacy support */
+  --color-bg: var(--color-background);
+  --color-text: #1e293b;
+}
+
+body {
+  font-family: "Plus Jakarta Sans", "Inter", -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-background);
+  color: var(--color-card-foreground);
+  line-height: 1.5;
+}
