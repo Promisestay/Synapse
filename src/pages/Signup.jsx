@@ -1,7 +1,16 @@
 import { useState, useContext } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { AuthContext } from "../context/AuthContext"
-import { User, Lock, Mail, ArrowRight, BookOpen, AlertCircle } from "lucide-react"
+import {Layers, Zap, User, Lock, Mail, ArrowRight, BookOpen, AlertCircle } from "lucide-react"
+
+
+const skillOptions = [
+  "Python", "JavaScript", "React", "Web Development",
+  "Graphic Design", "UI/UX Design", "Video Editing",
+  "Data Analysis", "Machine Learning", "Photography",
+  "Music Production", "Writing", "Public Speaking",
+  "French", "Spanish", "Guitar", "Piano", "Other",
+]
 
 export default function Signup() {
   const { signup } = useContext(AuthContext)
@@ -95,6 +104,50 @@ export default function Signup() {
                   required
                 />
                 <Mail className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+              </div>
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-5">
+              <div className="space-y-2">
+                <label htmlFor="teach" className="text-sm font-bold text-slate-700 ml-1">
+                  Add Skill
+                </label>
+                <div className="relative">
+                  <select
+                    id="teach"
+                    name="teach"
+                 
+                    className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-100 focus:border-purple-500 outline-none transition-all font-medium text-slate-900 placeholder:text-slate-400"
+                    value={formData.teach}
+                    onChange={handleChange}
+                    required
+                  >
+
+                  <option value="">Select a skill...</option>
+                  {skillOptions.map((skill) => (
+                    <option key={skill} value={skill}>{skill}</option>
+                  ))}
+                  </select>                    
+                  <Zap className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-slate-700 ml-1">Your Skill Level</label>
+                <div className="relative">
+                  <select
+                    name="level"
+                    value={formData.level}
+                    onChange={handleChange}
+                    className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-100 focus:border-purple-500 outline-none transition-all font-medium text-slate-900 placeholder:text-slate-400"
+                    required
+                  >
+                    <option>Beginner</option>
+                    <option>Intermediate</option>
+                    <option>Expert</option>
+                  </select>  
+                  <Layers className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                </div>
               </div>
             </div>
 
