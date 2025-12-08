@@ -31,7 +31,7 @@ export default function Navbar() {
     <nav className=" relative bg-surface/90 backdrop-blur-md border-b border-border py-4 top-0 z-50 transition-all duration-300">
       <div className="container max-w-7xl mx-auto px-6 flex justify-between items-center">
         <Link to={isLoggedIn ? "/dashboard" : "/"} className="flex items-center group">
-          <img src="./public/logo2.png" alt="" className="h-[60px] w-[70px]"/>
+          <img src="./logo2.png" alt="" className="h-[60px] w-[70px]"/>
           <span className="text-xl font-bold text-primary tracking-tight font-heading -translate-x-4">Synapse</span>
         </Link>
 
