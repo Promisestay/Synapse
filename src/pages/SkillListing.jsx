@@ -57,7 +57,7 @@ export default function SkillListing() {
             <div className="space-y-3">
               <label htmlFor="teach" className="text-sm font-bold text-foreground flex items-center gap-2">
                 <div className="p-1.5 bg-indigo-50 text-indigo-600 rounded-md"><Zap size={16} /></div>
-                Skill You Can Teach
+                Skill You Want to Teach
               </label>
               <div className="relative">
                 <select

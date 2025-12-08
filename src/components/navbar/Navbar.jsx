@@ -27,13 +27,12 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="bg-surface/90 backdrop-blur-md border-b border-border py-4 sticky top-0 z-50 transition-all duration-300">
+   
+    <nav className=" relative bg-surface/90 backdrop-blur-md border-b border-border py-4 top-0 z-50 transition-all duration-300">
       <div className="container max-w-7xl mx-auto px-6 flex justify-between items-center">
-        <Link to={isLoggedIn ? "/dashboard" : "/"} className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-primary/30 group-hover:scale-105 transition-transform duration-300">
-            <img src="./src/assets/logo2.png" alt="" />
-          </div>
-          <span className="text-xl font-bold text-primary tracking-tight font-heading">Synapse</span>
+        <Link to={isLoggedIn ? "/dashboard" : "/"} className="flex items-center group">
+          <img src="./src/assets/logo2.png" alt="" className="h-[60px] w-[70px]"/>
+          <span className="text-xl font-bold text-primary tracking-tight font-heading -translate-x-4">Synapse</span>
         </Link>
 
         <div className="hidden md:flex gap-8 items-center">
@@ -140,5 +139,6 @@ export default function Navbar() {
         )}
       </div>
     </nav>
+   
   )
 }
