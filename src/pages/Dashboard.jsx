@@ -1,18 +1,16 @@
-import { useState, useContext } from "react"
-import { AuthContext } from "../context/AuthContext"
+import { useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { Zap, Users, TrendingUp } from "lucide-react"
 import MatchCard from "../components/cards/MatchCard"
 import TradeCard from "../components/cards/TradeCard"
+import { useAuthStore } from "../store/useAuthStore"
 
 export default function Dashboard() {
-  const { currentUser } = useContext(AuthContext)
+  const {authUser} = useAuthStore
+  console.log(authUser);
   const navigate = useNavigate()
   const location = useLocation()
   const [activeTab, setActiveTab] = useState(location.state?.activeTab || "matches")
-
-
-  const user = currentUser || { name: "Student", credits: 25 }
 
   /* 
     Matches and suggested trades should ideally come from the backend based on the user's skills.
@@ -29,7 +27,7 @@ export default function Dashboard() {
 
         <div className="flex justify-between items-end mb-10 pb-6 border-b border-border/60 max-md:flex-col max-md:items-start max-md:gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">Welcome back, {currentUser?.name}! 👋</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">Welcome back, {authUser?.fullName}! 👋</h1>
             <p className="mt-2 text-muted-foreground">Here's what's happening with your skill trades today.</p>
           </div>
           <button className="px-5 py-2.5 bg-primary hover:bg-primary-dark text-primary-foreground rounded-xl font-semibold shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2" onClick={() => navigate("/list-skill")}>
@@ -46,7 +44,7 @@ export default function Dashboard() {
             </div>
             <div className="relative z-10">
               <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider mb-1">Total Credits</p>
-              <p className="text-3xl font-extrabold text-foreground">{currentUser?.credits || 0}</p>
+              <p className="text-3xl font-extrabold text-foreground">{authUser?.credits || 0}</p>
             </div>
           </div>
 
@@ -136,10 +134,10 @@ export default function Dashboard() {
                 <span className="w-2 h-2 rounded-full bg-indigo-500"></span> I Can Teach
               </h3>
               <div className="flex flex-wrap gap-2">
-                {currentUser?.teach ? (
+                {authUser?.teach ? (
                   <span className="bg-white text-indigo-700 border border-indigo-200 shadow-sm rounded-lg px-3 py-1.5 font-semibold text-sm flex items-center gap-2">
-                    {currentUser.teach}
-                    {currentUser.level && <span className="bg-indigo-100 text-indigo-800 text-xs px-1.5 py-0.5 rounded-full">{currentUser.level}</span>}
+                    {authUser.teach}
+                    {authUser.level && <span className="bg-indigo-100 text-indigo-800 text-xs px-1.5 py-0.5 rounded-full">{authUser.level}</span>}
                   </span>
                 ) : (
                   <span className="text-sm text-muted-foreground italic">No skills listed yet</span>

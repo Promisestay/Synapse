@@ -1,7 +1,7 @@
-import { useState, useContext } from "react"
-import { useNavigate, Link } from "react-router-dom"
-import { AuthContext } from "../context/AuthContext"
+import { useState } from "react"
+import {  Link } from "react-router-dom"
 import { Layers, Zap, User, Lock, Mail, ArrowRight, BookOpen, AlertCircle } from "lucide-react"
+import { useAuthStore } from "../store/useAuthStore"
 
 
 const skillOptions = [
@@ -13,31 +13,33 @@ const skillOptions = [
 ]
 
 export default function Signup() {
-  const { signup } = useContext(AuthContext)
+  const {signup, isSigningUp} = useAuthStore()
 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    skillName: "",
+    skillLevel: "",
     password: "",
     confirmPassword: ""
   })
+
   const [error, setError] = useState("")
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setError("")
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    const userData = { name: formData.name, email: formData.email, password: formData.password, teach: formData.teach, level: formData.level };
-    const result = await signup(userData);
+    setError("Passwords do not match");
+    return;
+  }
+    const {name, ...rest} = formData
+    const result = signup({...rest, fullName: name})
+    setError("")
 
     if (result.success) {
       navigate("/dashboard");
@@ -45,7 +47,6 @@ export default function Signup() {
       setError(result.message);
     }
   }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 font-sans p-6 relative overflow-hidden">
 
@@ -115,10 +116,10 @@ export default function Signup() {
                 <div className="relative">
                   <select
                     id="teach"
-                    name="teach"
+                    name="skillName"
 
                     className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-100 focus:border-purple-500 outline-none transition-all font-medium text-slate-900 placeholder:text-slate-400"
-                    value={formData.teach}
+                    value={formData.skillName}
                     onChange={handleChange}
                     required
                   >
@@ -136,15 +137,15 @@ export default function Signup() {
                 <label className="text-sm font-bold text-slate-700 ml-1">Level</label>
                 <div className="relative">
                   <select
-                    name="level"
-                    value={formData.level}
+                    name="skillLevel"
+                    value={formData.skillLevel}
                     onChange={handleChange}
                     className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-100 focus:border-purple-500 outline-none transition-all font-medium text-slate-900 placeholder:text-slate-400"
                     required
                   >
-                    <option>Beginner</option>
-                    <option>Intermediate</option>
-                    <option>Expert</option>
+                    <option>beginner</option>
+                    <option>intermediate</option>
+                    <option>expert</option>
                   </select>
                   <Layers className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
                 </div>

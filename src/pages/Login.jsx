@@ -1,7 +1,6 @@
-import { useState, useContext } from "react"
+import { useState} from "react"
 import { useNavigate, Link } from "react-router-dom"
-import { AuthContext } from "../context/AuthContext"
-import { LogIn, User, Lock, ArrowRight } from "lucide-react"
+import { User, Lock, ArrowRight ,Loader} from "lucide-react"
 import { useAuthStore } from "../store/useAuthStore"
 
 export default function Login() {
@@ -79,10 +78,11 @@ export default function Login() {
 
             <button
               type="submit"
-              className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-indigo-200 transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 group"
-            >
-              Log In
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              disabled={isLoggingIn}
+              className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-indigo-200 transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 group disabled:bg-indigo-300"
+            > 
+              {isLoggingIn ? <Loader className="animate-spin" /> : <><span>Log In</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></>}
             </button>
           </form>
 

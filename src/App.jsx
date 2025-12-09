@@ -30,9 +30,7 @@ function AppContent() {
       </div> 
   }
 
-  console.log(authUser)
   const location = useLocation();
-
   const showNavbar = location.pathname === "/" || authUser;
   return (
     <div className="min-h-screen bg-background text-card-foreground flex flex-col font-sans">
