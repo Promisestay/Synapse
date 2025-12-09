@@ -154,42 +154,62 @@ export default function WalletScreen() {
       {isAddFundsOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200" onClick={() => setIsAddFundsOpen(false)}>
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-100 animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
-            <div className="bg-slate-50 px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-              <h3 className="font-bold text-lg text-slate-900">Add Funds</h3>
+            <div className="bg-slate-200/50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+              <h3 className="font-extrabold text-2xl text-slate-900">Add Funds</h3>
               <button className="text-slate-400 hover:text-slate-600 bg-white rounded-full p-1" onClick={() => setIsAddFundsOpen(false)}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
               </button>
             </div>
-            <div className="p-6">
-              <p className="text-sm text-slate-500 mb-6">Select an amount to calculate purchase.</p>
-              <div className="grid grid-cols-3 gap-3 mb-6">
-                {["10", "20", "50"].map((amt) => (
+
+            <div className="p-8">
+              <p className="text-slate-500 font-bold mb-6 text-sm">Select an amount to calculate purchase</p>
+
+              <div className="grid grid-cols-3 gap-4 mb-8">
+                {["10", "20", "30"].map((amt) => (
                   <button
                     key={amt}
-                    className={`py-3 rounded-xl border font-bold transition-all ${amount === amt ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-500/20' : 'bg-white text-slate-700 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50'}`}
+                    className={`py-4 rounded-xl border border-slate-300 font-bold text-lg transition-all ${amount === amt ? 'bg-white text-slate-900 ring-2 ring-slate-900' : 'bg-white text-slate-900 hover:bg-slate-50'}`}
                     onClick={() => setAmount(amt)}
                   >
                     {amt} Cr
                   </button>
                 ))}
               </div>
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 mb-6">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-medium text-slate-600">Price per Credit</span>
-                  <span className="text-sm font-bold text-slate-900">$1.00 USD</span>
+
+              <div className="space-y-2 mb-8">
+                <label className="text-sm font-bold text-slate-700">Input Credit Amount</label>
+                <input
+                  type="number"
+                  className="w-full bg-slate-50 border-none rounded-xl p-4 text-slate-500 font-medium outline-none text-lg"
+                  placeholder="1,000"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                />
+              </div>
+
+              <div className="bg-slate-50 p-6 rounded-xl mb-8">
+                <div className="flex justify-between items-center mb-3">
+                  <span className="font-bold text-slate-700">Price Per Credit</span>
+                  <span className="font-bold text-slate-900">₦ 1.00 NGN</span>
                 </div>
-                <div className="flex justify-between items-center pt-2 border-t border-slate-200">
-                  <span className="font-bold text-slate-900">Total</span>
-                  <span className="font-bold text-xl text-indigo-600">${amount || "0"}.00</span>
+                <div className="h-px bg-slate-200 w-full mb-3"></div>
+                <div className="flex justify-between items-center">
+                  <span className="font-bold text-xl text-slate-700">Total</span>
+                  <span className="font-bold text-xl text-slate-900">₦ {amount || "0.00"}</span>
                 </div>
               </div>
+
               <button
-                className="w-full py-3.5 bg-indigo-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold text-lg shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 disabled={!amount}
                 onClick={handleAddFunds}
               >
-                Proceed to Payment
+                Exchange <Zap size={20} className="fill-current" />
               </button>
+
+              <p className="text-center text-[10px] text-slate-500 mt-4 font-bold">
+                By exchanging, you agree to our <a href="#" className="underline">Community Guidelines</a>
+              </p>
             </div>
           </div>
         </div>

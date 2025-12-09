@@ -1,7 +1,7 @@
 import { useState, useContext } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { AuthContext } from "../context/AuthContext"
-import {Layers, Zap, User, Lock, Mail, ArrowRight, BookOpen, AlertCircle } from "lucide-react"
+import { Layers, Zap, User, Lock, Mail, ArrowRight, BookOpen, AlertCircle } from "lucide-react"
 
 
 const skillOptions = [
@@ -27,7 +27,7 @@ export default function Signup() {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError("")
 
@@ -36,11 +36,11 @@ export default function Signup() {
       return;
     }
 
-    const userData = { name: formData.name, email: formData.email, password: formData.password };
-    const result = signup(userData);
+    const userData = { name: formData.name, email: formData.email, password: formData.password, teach: formData.teach, level: formData.level };
+    const result = await signup(userData);
 
     if (result.success) {
-
+      navigate("/dashboard");
     } else {
       setError(result.message);
     }
@@ -48,14 +48,14 @@ export default function Signup() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 font-sans p-6 relative overflow-hidden">
-      
+
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-purple-200/40 rounded-full blur-[100px]"></div>
         <div className="absolute bottom-[-10%] left-[-5%] w-[40%] h-[40%] bg-indigo-200/40 rounded-full blur-[100px]"></div>
       </div>
 
       <div className="w-full max-w-lg bg-white rounded-3xl shadow-xl shadow-purple-100 border border-white relative z-10 overflow-hidden">
-       
+
         <div className="bg-purple-600 h-2"></div>
 
         <div className="p-8 sm:p-10">
@@ -110,30 +110,30 @@ export default function Signup() {
             <div className="grid sm:grid-cols-2 gap-5">
               <div className="space-y-2">
                 <label htmlFor="teach" className="text-sm font-bold text-slate-700 ml-1">
-                  Add Skill
+                  Add Skills
                 </label>
                 <div className="relative">
                   <select
                     id="teach"
                     name="teach"
-                 
+
                     className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-100 focus:border-purple-500 outline-none transition-all font-medium text-slate-900 placeholder:text-slate-400"
                     value={formData.teach}
                     onChange={handleChange}
                     required
                   >
 
-                  <option value="">Select a skill...</option>
-                  {skillOptions.map((skill) => (
-                    <option key={skill} value={skill}>{skill}</option>
-                  ))}
-                  </select>                    
+                    <option value="">Select a skill...</option>
+                    {skillOptions.map((skill) => (
+                      <option key={skill} value={skill}>{skill}</option>
+                    ))}
+                  </select>
                   <Zap className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700 ml-1">Your Skill Level</label>
+                <label className="text-sm font-bold text-slate-700 ml-1">Level</label>
                 <div className="relative">
                   <select
                     name="level"
@@ -145,7 +145,7 @@ export default function Signup() {
                     <option>Beginner</option>
                     <option>Intermediate</option>
                     <option>Expert</option>
-                  </select>  
+                  </select>
                   <Layers className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
                 </div>
               </div>

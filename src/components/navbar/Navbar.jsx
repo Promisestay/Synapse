@@ -27,11 +27,11 @@ export default function Navbar() {
   }
 
   return (
-   
+
     <nav className=" relative bg-surface/90 backdrop-blur-md border-b border-border py-4 top-0 z-50 transition-all duration-300">
       <div className="container max-w-7xl mx-auto px-6 flex justify-between items-center">
         <Link to={isLoggedIn ? "/dashboard" : "/"} className="flex items-center group">
-          <img src="./logo2.png" alt="" className="h-[60px] w-[70px]"/>
+          <img src="./logo2.png" alt="" className="h-[60px] w-[70px]" />
           <span className="text-xl font-bold text-primary tracking-tight font-heading -translate-x-4">Synapse</span>
         </Link>
 
@@ -73,13 +73,13 @@ export default function Navbar() {
           {isLoggedIn ? (
             <>
               <div className="hidden md:flex items-center gap-3">
-                <div className="text-right">
+                <Link to="/profile" className="text-right hover:opacity-80 transition-opacity">
                   <p className="text-sm font-semibold text-foreground leading-none">{user?.name || "User"}</p>
                   <p className="text-xs text-muted-foreground">Student</p>
-                </div>
-                <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold border border-primary/20">
+                </Link>
+                <Link to="/profile" className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold border border-primary/20 hover:ring-2 hover:ring-primary/20 transition-all">
                   {user?.name?.charAt(0) || "U"}
-                </div>
+                </Link>
               </div>
               <button
                 onClick={handleLogout}
@@ -105,7 +105,7 @@ export default function Navbar() {
           </button>
         </div>
 
-       
+
         {menuOpen && (
           <div className="absolute top-full left-0 right-0 bg-surface border-b border-border shadow-xl md:hidden p-4 flex flex-col gap-2 animate-in slide-in-from-top-2">
             {(!isLoggedIn || path === "/") && (
@@ -127,6 +127,7 @@ export default function Navbar() {
                 <Link to="/wallet" className="p-3 text-sm font-medium text-foreground hover:bg-muted rounded-md" onClick={() => setMenuOpen(false)}>Wallet</Link>
                 <Link to="/Leader" className="p-3 text-sm font-medium text-foreground hover:bg-muted rounded-md" onClick={() => setMenuOpen(false)}>Leaderboard</Link>
                 <Link to="/notification" className="p-3 text-sm font-medium text-foreground hover:bg-muted rounded-md" onClick={() => setMenuOpen(false)}>Notification</Link>
+                <Link to="/profile" className="p-3 text-sm font-medium text-foreground hover:bg-muted rounded-md" onClick={() => setMenuOpen(false)}>Profile</Link>
                 <button onClick={handleLogout} className="p-3 mt-2 text-sm font-medium text-white bg-red-500 rounded-md w-full text-left">Logout</button>
               </>
             ) : (
@@ -139,6 +140,6 @@ export default function Navbar() {
         )}
       </div>
     </nav>
-   
+
   )
 }

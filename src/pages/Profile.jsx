@@ -1,170 +1,180 @@
-import { useContext } from "react"
+import { useContext, useState, useEffect } from "react"
 import { AuthContext } from "../context/AuthContext"
-import { MapPin, Mail, Edit2, Star, Clock, Zap, BookOpen } from "lucide-react"
+import { Camera, Plus } from "lucide-react"
 
 export default function Profile() {
+  const { currentUser, updateProfile } = useContext(AuthContext)
+  const [isEditing, setIsEditing] = useState(false)
 
-  const { currentUser } = useContext(AuthContext)
+  // Initialize from currentUser
+  const [profile, setProfile] = useState({
+    name: "",
+    email: "",
+    bio: "",
+    about: "",
+    teach: [],
+    learn: []
+  })
 
-  const profileData = {
-    name: currentUser?.name || "Student User",
-    email: currentUser?.email || "student@university.edu",
-    role: "Computer Science Student",
-    location: "New York, USA",
-    rating: 4.8,
-    reviews: 12,
-    completedTrades: 8,
-    totalCredits: 45,
-    hoursTaught: 24,
-    skillsOffered: ["Python", "Data Analysis", "Power BI", "React"],
-    skillsWanted: ["Graphic Design", "Video Editing", "Public Speaking"],
-    pastTrades: [
-      { with: "Daniel F.", skill: "Python", date: "Dec 1, 2024", rating: 5, credits: 5, status: "Completed" },
-      { with: "Emma S.", skill: "Graphic Design", date: "Nov 28, 2024", rating: 4.8, credits: -4, status: "Completed" },
-      { with: "Mike T.", skill: "Video Editing", date: "Nov 25, 2024", rating: 4.9, credits: -3, status: "Completed" },
-    ],
+  // Update state when currentUser changes (e.g. on load)
+  useEffect(() => {
+    if (currentUser) {
+      setProfile({
+        name: currentUser.name || "",
+        email: currentUser.email || "",
+        bio: currentUser.bio || "",
+        about: currentUser.about || "",
+        teach: Array.isArray(currentUser.teach) ? currentUser.teach : (currentUser.teach ? [currentUser.teach] : []),
+        learn: Array.isArray(currentUser.learn) ? currentUser.learn : (currentUser.learn ? [currentUser.learn] : [])
+      })
+    }
+  }, [currentUser])
+
+  const handleSave = () => {
+    updateProfile(profile)
+    setIsEditing(false)
+    alert("Profile saved!")
+  }
+
+  // Helper to add skill (simplistic for now)
+  const addTeachSkill = () => {
+    const skill = prompt("Enter skill to teach:")
+    if (skill) {
+      setProfile(prev => ({ ...prev, teach: [...prev.teach, skill] }))
+    }
+  }
+
+  const addLearnSkill = () => {
+    const skill = prompt("Enter skill you want to learn:")
+    if (skill) {
+      setProfile(prev => ({ ...prev, learn: [...prev.learn, skill] }))
+    }
   }
 
   return (
-    <div className="min-h-screen bg-background pb-12 font-sans">
-     
-      <div className="h-48 bg-linear-to-r from-indigo-900 via-slate-900 to-indigo-900 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
-        <div className="absolute bottom-0 left-0 w-full h-px bg-white/10"></div>
-      </div>
+    <div className="min-h-screen bg-white p-4 md:p-8 font-sans">
+      <div className="max-w-[1000px] mx-auto bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden">
 
-      <div className="container max-w-[1000px] mx-auto px-6 -mt-20 relative z-10">
-       
-        <div className="bg-white rounded-2xl shadow-lg border border-border p-8 mb-8">
-          <div className="flex flex-col md:flex-row gap-8 items-start">
-            <div className="relative group">
-              <div className="w-32 h-32 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-5xl font-bold uppercase shadow-xl border-4 border-white">
-                {profileData.name.charAt(0)}
+        <div className="p-8 md:p-12">
+
+          {/* Top Section: Avatar + Fields */}
+          <div className="flex flex-col md:flex-row gap-10 items-start mb-12">
+
+            {/* Avatar */}
+            <div className="relative shrink-0">
+              <div className="w-32 h-32 rounded-full bg-blue-800 text-white flex items-center justify-center text-5xl font-bold border-4 border-white shadow-lg uppercase">
+                {profile.name.charAt(0) || "U"}
               </div>
-              <button className="absolute bottom-2 right-2 p-2 bg-white rounded-full shadow-md text-slate-600 hover:text-primary transition-colors border border-slate-100 cursor-pointer">
-                <Edit2 size={16} />
+              <button className="absolute bottom-1 right-1 p-2 bg-white rounded-full shadow-md border border-slate-100 text-slate-600 hover:text-purple-600 transition-colors">
+                <Camera size={18} />
               </button>
             </div>
 
-            <div className="flex-1 pt-2 w-full">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-                <div>
-                  <h1 className="text-3xl font-extrabold text-foreground">{profileData.name}</h1>
-                  <p className="text-muted-foreground font-medium flex items-center gap-2">
-                    {profileData.role} • {profileData.location}
-                  </p>
-                </div>
-                <div className="flex gap-3 w-full md:w-auto">
-                  <button className="flex-1 md:flex-none px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 font-semibold transition-colors shadow-sm">
-                    Edit Profile
-                  </button>
-                  <button className="flex-1 md:flex-none px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary-dark font-semibold transition-colors shadow-md shadow-primary/25">
-                    Share <span className="hidden sm:inline">Profile</span>
-                  </button>
-                </div>
+            {/* Main Info Fields */}
+            <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Full Name</label>
+                <input
+                  type="text"
+                  value={profile.name}
+                  onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                  className="w-full bg-slate-200/50 rounded-lg p-3 text-slate-900 font-medium border border-transparent focus:border-purple-300 focus:bg-white transition-all outline-none"
+                />
               </div>
 
-              <div className="flex flex-wrap gap-6 mt-6 pt-6 border-t border-slate-100">
-                <div className="flex gap-3 items-center">
-                  <div className="p-2 bg-amber-50 rounded-lg text-amber-500">
-                    <Star size={20} className="fill-current" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Reputation</p>
-                    <p className="text-lg font-bold text-foreground">{profileData.rating}/5.0</p>
-                  </div>
-                </div>
-
-                <div className="flex gap-3 items-center">
-                  <div className="p-2 bg-indigo-50 rounded-lg text-indigo-500">
-                    <Clock size={20} />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Hours Taught</p>
-                    <p className="text-lg font-bold text-foreground">{profileData.hoursTaught} hrs</p>
-                  </div>
-                </div>
-
-                <div className="flex gap-3 items-center">
-                  <div className="p-2 bg-emerald-50 rounded-lg text-emerald-500">
-                    <MapPin size={20} />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Credits</p>
-                    <p className="text-lg font-bold text-foreground">{profileData.completedTrades} Earned</p>
-                  </div>
-                </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Email</label>
+                <input
+                  type="email"
+                  value={profile.email}
+                  disabled
+                  className="w-full bg-slate-100 rounded-lg p-3 text-slate-500 font-medium border border-transparent cursor-not-allowed"
+                />
               </div>
-            </div>
-          </div>
-        </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          
-          <div className="md:col-span-1 flex flex-col gap-6">
-            <div className="bg-white rounded-2xl shadow-sm border border-border p-6">
-              <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                <Zap size={18} className="text-indigo-500" /> I Can Teach
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {profileData.skillsOffered.map(skill => (
-                  <span key={skill} className="px-3 py-1.5 bg-indigo-50 text-indigo-700 text-sm font-semibold rounded-lg border border-indigo-100">{skill}</span>
-                ))}
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-sm border border-border p-6">
-              <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                <BookOpen size={18} className="text-purple-500" /> I Want To Learn
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {profileData.skillsWanted.map(skill => (
-                  <span key={skill} className="px-3 py-1.5 bg-purple-50 text-purple-700 text-sm font-semibold rounded-lg border border-purple-100">{skill}</span>
-                ))}
+              <div className="md:col-span-2 space-y-2">
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Bio</label>
+                <input
+                  type="text"
+                  value={profile.bio}
+                  onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
+                  placeholder="Short bio..."
+                  className="w-full bg-slate-200/50 rounded-lg p-3 text-slate-900 font-medium border border-transparent focus:border-purple-300 focus:bg-white transition-all outline-none"
+                />
               </div>
             </div>
           </div>
 
-          
-          <div className="md:col-span-2">
-            <div className="bg-white rounded-2xl shadow-sm border border-border overflow-hidden">
-              <div className="p-6 border-b border-border flex justify-between items-center bg-slate-50/50">
-                <h3 className="text-lg font-bold text-foreground">Trade History</h3>
-                <button className="text-sm font-semibold text-primary hover:text-primary-dark">View All</button>
-              </div>
+          <div className="h-px bg-slate-200 w-full mb-12"></div>
 
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead className="bg-slate-50 text-xs font-bold text-muted-foreground uppercase tracking-wider border-b border-border">
-                    <tr>
-                      <th className="px-6 py-4">User</th>
-                      <th className="px-6 py-4">Skill Traded</th>
-                      <th className="px-6 py-4">Date</th>
-                      <th className="px-6 py-4 text-right">Credits</th>
-                      <th className="px-6 py-4 text-center">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    {profileData.pastTrades.map((trade, idx) => (
-                      <tr key={idx} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="px-6 py-4 font-medium text-foreground">{trade.with}</td>
-                        <td className="px-6 py-4 text-muted-foreground">{trade.skill}</td>
-                        <td className="px-6 py-4 text-muted-foreground text-sm">{trade.date}</td>
-                        <td className={`px-6 py-4 text-right font-bold ${trade.credits > 0 ? "text-emerald-600" : "text-amber-600"}`}>
-                          {trade.credits > 0 ? "+" : ""}{trade.credits}
-                        </td>
-                        <td className="px-6 py-4 text-center">
-                          <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">
-                            {trade.status}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+          {/* About Me */}
+          <div className="mb-12">
+            <h3 className="text-lg font-bold text-slate-700 mb-4">About me</h3>
+            <div className="bg-slate-200/50 rounded-xl p-4 md:p-6 pb-8 relative group focus-within:bg-white focus-within:ring-2 focus-within:ring-purple-100 transition-all">
+              <textarea
+                className="w-full bg-transparent border-none focus:ring-0 text-slate-700 text-sm leading-relaxed resize-none p-0 outline-none"
+                rows="3"
+                value={profile.about}
+                onChange={(e) => setProfile({ ...profile, about: e.target.value })}
+                placeholder="Tell us about yourself..."
+              ></textarea>
+              <div className="absolute bottom-3 left-6 text-[10px] text-slate-400">{profile.about.length} characters</div>
             </div>
           </div>
+
+          {/* Skills I Can Teach */}
+          <div className="mb-12">
+            <h3 className="text-xl font-bold text-slate-700 mb-6">Skills I Can Teach</h3>
+            <div className="flex flex-wrap gap-4">
+              {profile.teach.length > 0 ? profile.teach.map((skill, index) => (
+                <div key={index} className="bg-slate-200/50 px-4 py-3 rounded-lg text-sm font-bold text-slate-700 text-center border border-transparent hover:border-slate-300 transition-colors">
+                  {skill}
+                </div>
+              )) : (
+                <div className="text-slate-400 text-sm italic py-2">No skills listed yet.</div>
+              )}
+              <button
+                onClick={addTeachSkill}
+                className="flex items-center justify-center gap-2 bg-slate-200 hover:bg-slate-300 px-4 py-3 rounded-lg text-sm font-bold text-slate-700 transition-colors"
+              >
+                <Plus size={16} /> Add Skill
+              </button>
+            </div>
+          </div>
+
+          {/* Skills I Want to Learn */}
+          <div className="mb-16">
+            <h3 className="text-xl font-bold text-slate-700 mb-6">Skills I Want to Learn</h3>
+            <div className="flex flex-wrap gap-4">
+              {profile.learn.length > 0 ? profile.learn.map((skill, index) => (
+                <div key={index} className="bg-slate-200/50 px-4 py-3 rounded-lg text-sm font-bold text-slate-700 text-center border border-transparent hover:border-slate-300 transition-colors">
+                  {skill}
+                </div>
+              )) : (
+                <div className="text-slate-400 text-sm italic py-2">No learning interests listed yet.</div>
+              )}
+              <button
+                onClick={addLearnSkill}
+                className="flex items-center justify-center gap-2 bg-slate-200 hover:bg-slate-300 px-4 py-3 rounded-lg text-sm font-bold text-slate-700 transition-colors"
+              >
+                <Plus size={16} /> Add Skill
+              </button>
+            </div>
+          </div>
+
+          {/* Footer Actions */}
+          <div className="flex justify-end gap-4 pt-4">
+            <button className="px-8 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg transition-colors">
+              Cancel
+            </button>
+            <button
+              onClick={handleSave}
+              className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg shadow-blue-200 transition-all hover:-translate-y-0.5"
+            >
+              Save Changes
+            </button>
+          </div>
+
         </div>
       </div>
     </div>

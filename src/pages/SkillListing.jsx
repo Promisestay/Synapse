@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { BookOpen, Zap, Layers, Video, MessageCircle, MapPin } from "lucide-react"
+import { BookOpen, Zap, Layers, Video, MessageCircle, DollarSign, Database } from "lucide-react"
 
 const skillOptions = [
   "Python", "JavaScript", "React", "Web Development",
@@ -15,7 +15,7 @@ export default function SkillListing() {
   const [formData, setFormData] = useState({
     teach: "",
     want: "",
-    level: "Intermediate",
+    credits: "20",
     mode: "Video call",
     description: ""
   })
@@ -27,62 +27,45 @@ export default function SkillListing() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    
-    alert("Skill listed successfully! You can now see matches.")
+
+    alert("Skill exchange listed successfully!")
     navigate("/dashboard")
   }
 
   return (
-    <main className="min-h-[calc(100vh-80px)] py-12 bg-background font-sans flex items-center justify-center">
-      <div className="container max-w-[600px] mx-auto px-6">
+    <main className="min-h-[calc(100vh-80px)] py-12 bg-white font-sans flex items-center justify-center">
+      <div className="container max-w-[500px] mx-auto px-6">
 
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground mb-2">Share Your Knowledge</h1>
-          <p className="text-muted-foreground">List a skill you can teach to start trading credits.</p>
-        </div>
+        <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden p-8">
 
-        <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
-         
-          <div className="bg-slate-50 border-b border-slate-100 px-8 py-4 flex justify-between items-center">
-            <span className="text-xs font-bold uppercase tracking-widest text-slate-500">New Listing</span>
-            <div className="flex gap-1">
-              <div className="w-2 h-2 rounded-full bg-primary"></div>
-              <div className="w-2 h-2 rounded-full bg-slate-200"></div>
-              <div className="w-2 h-2 rounded-full bg-slate-200"></div>
-            </div>
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-extrabold text-slate-900 mb-2">Skill Exchange</h1>
+            <p className="text-slate-500 font-medium text-sm">List a skill you can teach to start trading credits</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-8 flex flex-col gap-6">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
 
-            <div className="space-y-3">
-              <label htmlFor="teach" className="text-sm font-bold text-foreground flex items-center gap-2">
-                <div className="p-1.5 bg-indigo-50 text-indigo-600 rounded-md"><Zap size={16} /></div>
-                Skill You Want to Teach
+            <div className="space-y-2">
+              <label htmlFor="teach" className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                <Zap size={16} className="text-indigo-600" />
+                Skill You want to Teach
               </label>
               <div className="relative">
-                <select
-                  id="teach"
+                <input
+                  type="text"
                   name="teach"
+                  placeholder="Python"
                   value={formData.teach}
                   onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground cursor-pointer"
-                >
-                  <option value="">Select a skill...</option>
-                  {skillOptions.map((skill) => (
-                    <option key={skill} value={skill}>{skill}</option>
-                  ))}
-                </select>
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                </div>
+                  className="w-full px-4 py-3 bg-slate-50 border border-transparent rounded-xl focus:bg-white focus:border-indigo-200 focus:ring-4 focus:ring-indigo-50/50 transition-all font-medium text-slate-900 placeholder:text-slate-400 outline-none"
+                />
               </div>
             </div>
 
-            <div className="space-y-3">
-              <label htmlFor="want" className="text-sm font-bold text-foreground flex items-center gap-2">
-                <div className="p-1.5 bg-purple-50 text-purple-600 rounded-md"><BookOpen size={16} /></div>
-                Skill You Want to Learn
+            <div className="space-y-2">
+              <label htmlFor="want" className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                <BookOpen size={16} className="text-purple-600" />
+                Skill You want to Learn
               </label>
               <div className="relative">
                 <select
@@ -91,9 +74,9 @@ export default function SkillListing() {
                   value={formData.want}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground cursor-pointer"
+                  className="w-full px-4 py-3 bg-slate-50 border border-transparent rounded-xl focus:bg-white focus:border-purple-200 focus:ring-4 focus:ring-purple-50/50 transition-all font-medium text-slate-900 cursor-pointer outline-none appearance-none"
                 >
-                  <option value="">Select a skill...</option>
+                  <option value="">Select a skill</option>
                   {skillOptions.map((skill) => (
                     <option key={skill} value={skill}>{skill}</option>
                   ))}
@@ -104,67 +87,63 @@ export default function SkillListing() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-     
-              <div className="space-y-3">
-                <label className="text-sm font-bold text-foreground flex items-center gap-2">
-                  <div className="p-1.5 bg-amber-50 text-amber-600 rounded-md"><Layers size={16} /></div>
-                  Your Skill Level
-                </label>
-                <select
-                  name="level"
-                  value={formData.level}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground cursor-pointer"
-                >
-                  <option>Beginner</option>
-                  <option>Intermediate</option>
-                  <option>Advanced</option>
-                  <option>Expert</option>
-                </select>
-              </div>
-
-              <div className="space-y-3">
-                <label className="text-sm font-bold text-foreground flex items-center gap-2">
-                  <div className="p-1.5 bg-emerald-50 text-emerald-600 rounded-md"><Video size={16} /></div>
+            <div className="grid grid-cols-2 gap-5">
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                  <Video size={16} className="text-emerald-600" />
                   Preferred Mode
                 </label>
-                <select
-                  name="mode"
-                  value={formData.mode}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground cursor-pointer"
-                >
-                  <option>Video call</option>
-                  <option>In-person</option>
-                  <option>Chat</option>
-                  <option>Flexible</option>
-                </select>
+                <div className="relative">
+                  <select
+                    name="mode"
+                    value={formData.mode}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-slate-50 border border-transparent rounded-xl focus:bg-white focus:border-emerald-200 focus:ring-4 focus:ring-emerald-50/50 transition-all font-medium text-slate-900 cursor-pointer outline-none appearance-none"
+                  >
+                    <option>Video call</option>
+                    <option>In-person</option>
+                  </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                  <Database size={16} className="text-amber-600" />
+                  Credits
+                </label>
+                <div className="relative">
+                  <div className="w-full px-4 py-3 bg-slate-50 border border-transparent rounded-xl font-medium text-slate-500">
+                    {formData.credits} Credits
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="space-y-3">
-              <label htmlFor="description" className="text-sm font-bold text-foreground flex items-center gap-2">
-                <div className="p-1.5 bg-slate-100 text-slate-600 rounded-md"><MessageCircle size={16} /></div>
+            <div className="space-y-2">
+              <label htmlFor="description" className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                <MessageCircle size={16} className="text-slate-600" />
                 Description (Optional)
               </label>
               <textarea
                 id="description"
                 name="description"
                 rows="3"
-                placeholder="Briefly describe your experience..."
+                placeholder="Briefly describe your experience................"
                 value={formData.description}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground resize-none"
+                className="w-full px-4 py-3 bg-slate-50 border border-transparent rounded-xl focus:bg-white focus:border-slate-200 focus:ring-4 focus:ring-slate-100 transition-all font-medium text-slate-900 resize-none outline-none"
               ></textarea>
             </div>
 
             <div className="pt-2">
-              <button type="submit" className="w-full py-4 bg-primary hover:bg-primary-dark text-primary-foreground rounded-xl font-bold text-lg shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
-                Create Listing <Zap size={20} className="fill-current" />
+              <button type="submit" className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-blue-200 transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
+                Exchange <Zap size={18} className="fill-current" />
               </button>
-              <p className="text-center text-xs text-muted-foreground mt-4">
-                By listing, you agree to our <a href="#" className="underline hover:text-primary">Community Guidelines</a>
+              <p className="text-center text-[10px] text-slate-500 mt-4 font-semibold">
+                By exchanging, you agree to our <a href="#" className="underline">Community Guidelines</a>
               </p>
             </div>
 

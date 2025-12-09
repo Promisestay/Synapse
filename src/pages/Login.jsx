@@ -2,38 +2,32 @@ import { useState, useContext } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { AuthContext } from "../context/AuthContext"
 import { LogIn, User, Lock, ArrowRight } from "lucide-react"
+import { useAuthStore } from "../store/useAuthStore"
 
 export default function Login() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const { login } = useContext(AuthContext)
   const navigate = useNavigate()
 
   const [error, setError] = useState("")
+   const { login, isLoggingIn } = useAuthStore();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setError("")
-
-    const result = login(email.trim(), password)
-
-    if (result.success) {
-
-    } else {
-      setError(result.message)
-    }
+    await login({email, password})  
+    navigate("/dashboard")
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 font-sans p-6 relative overflow-hidden">
-    
+
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-5%] w-[40%] h-[40%] bg-indigo-200/40 rounded-full blur-[100px]"></div>
         <div className="absolute bottom-[-10%] right-[-5%] w-[40%] h-[40%] bg-purple-200/40 rounded-full blur-[100px]"></div>
       </div>
 
       <div className="w-full max-w-md bg-white rounded-3xl shadow-xl shadow-indigo-100 border border-white relative z-10 overflow-hidden">
-        
+
         <div className="bg-indigo-600 h-2"></div>
 
         <div className="p-8 sm:p-10">

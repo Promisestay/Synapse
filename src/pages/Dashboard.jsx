@@ -14,76 +14,14 @@ export default function Dashboard() {
 
   const user = currentUser || { name: "Student", credits: 25 }
 
-  const mockMatches = [
-    {
-      id: 1,
-      from: "Sarah Chen",
-      role: "UI/UX Designer",
-      score: 95,
-      teaches: "Figma",
-      wants: "Python",
-      avatar: "https://i.pravatar.cc/150?u=sarah",
-      credits: 15,
-      availableTime: "Mon, 4PM"
-    },
-    {
-      id: 2,
-      from: "Mike Ross",
-      role: "Law Student",
-      score: 88,
-      teaches: "Public Speaking",
-      wants: "Data Science",
-      avatar: "https://i.pravatar.cc/150?u=mike",
-      credits: 12,
-      availableTime: "Wed, 2PM"
-    },
-    {
-      id: 3,
-      from: "Jessica Pearson",
-      role: "MBA Student",
-      score: 82,
-      teaches: "Leadership",
-      wants: "React",
-      avatar: "https://i.pravatar.cc/150?u=jessica",
-      credits: 20,
-      availableTime: "Fri, 10AM"
-    },
-  ]
+  /* 
+    Matches and suggested trades should ideally come from the backend based on the user's skills.
+    For now, we start with empty arrays to satisfy the requirement that the dashboard is empty 
+    until there is relevant data.
+  */
+  const mockMatches = []
 
-  const suggestedTrades = [
-    {
-      name: "David Kim",
-      teachSkill: "Advanced React Patterns",
-      learnSkill: "Basic Python Scripting",
-      rating: 4.9,
-      time: "Tue, 2PM",
-      credits: 10
-    },
-    {
-      name: "Elena Rodriguez",
-      teachSkill: "Spanish Conversation",
-      learnSkill: "English Grammar",
-      rating: 5.0,
-      time: "Thu, 10AM",
-      credits: 8
-    },
-    {
-      name: "Tom Hardy",
-      teachSkill: "Video Editing (Premiere)",
-      learnSkill: "Graphic Design Principles",
-      rating: 4.7,
-      time: "Fri, 4PM",
-      credits: 15
-    },
-    {
-      name: "Lisa Wang",
-      teachSkill: "Piano Basics",
-      learnSkill: "Music Theory",
-      rating: 4.8,
-      time: "Sun, 3PM",
-      credits: 12
-    },
-  ]
+  const suggestedTrades = []
 
   return (
     <main className="min-h-[calc(100vh-80px)] py-10 bg-background font-sans">
@@ -189,7 +127,7 @@ export default function Dashboard() {
         <div className="bg-white border boundary-border rounded-2xl p-8 shadow-sm">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold text-foreground">My Skill Profile</h2>
-            <button className="text-sm font-semibold text-primary hover:underline">Edit Profile</button>
+            <button className="text-sm font-semibold text-primary hover:underline" onClick={() => navigate("/profile")}>Edit Profile</button>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -198,9 +136,15 @@ export default function Dashboard() {
                 <span className="w-2 h-2 rounded-full bg-indigo-500"></span> I Can Teach
               </h3>
               <div className="flex flex-wrap gap-2">
-                <span className="bg-white text-indigo-700 border border-indigo-200 shadow-sm rounded-lg px-3 py-1.5 font-semibold text-sm">Graphic Design</span>
-                <span className="bg-white text-indigo-700 border border-indigo-200 shadow-sm rounded-lg px-3 py-1.5 font-semibold text-sm">Figma</span>
-                <span className="bg-white text-indigo-700 border border-indigo-200 shadow-sm border-dashed rounded-lg px-3 py-1.5 font-semibold text-sm opacity-60 hover:opacity-100 cursor-pointer transition-opacity">+ Add</span>
+                {currentUser?.teach ? (
+                  <span className="bg-white text-indigo-700 border border-indigo-200 shadow-sm rounded-lg px-3 py-1.5 font-semibold text-sm flex items-center gap-2">
+                    {currentUser.teach}
+                    {currentUser.level && <span className="bg-indigo-100 text-indigo-800 text-xs px-1.5 py-0.5 rounded-full">{currentUser.level}</span>}
+                  </span>
+                ) : (
+                  <span className="text-sm text-muted-foreground italic">No skills listed yet</span>
+                )}
+                <span className="bg-white text-indigo-700 border border-indigo-200 shadow-sm border-dashed rounded-lg px-3 py-1.5 font-semibold text-sm opacity-60 hover:opacity-100 cursor-pointer transition-opacity" onClick={() => navigate("/profile")}>+ Add</span>
               </div>
             </div>
 
@@ -209,9 +153,8 @@ export default function Dashboard() {
                 <span className="w-2 h-2 rounded-full bg-purple-500"></span> I Want to Learn
               </h3>
               <div className="flex flex-wrap gap-2">
-                <span className="bg-white text-purple-700 border border-purple-200 shadow-sm rounded-lg px-3 py-1.5 font-semibold text-sm">Python</span>
-                <span className="bg-white text-purple-700 border border-purple-200 shadow-sm rounded-lg px-3 py-1.5 font-semibold text-sm">Data Science</span>
-                <span className="bg-white text-purple-700 border border-purple-200 shadow-sm border-dashed rounded-lg px-3 py-1.5 font-semibold text-sm opacity-60 hover:opacity-100 cursor-pointer transition-opacity">+ Add</span>
+                {/* Future: Map currentUser.learn skills here if available */}
+                <span className="bg-white text-purple-700 border border-purple-200 shadow-sm border-dashed rounded-lg px-3 py-1.5 font-semibold text-sm opacity-60 hover:opacity-100 cursor-pointer transition-opacity" onClick={() => navigate("/list-skill")}>+ Add</span>
               </div>
             </div>
           </div>
