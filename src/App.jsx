@@ -1,6 +1,5 @@
-import { useContext } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { AuthContext } from "./context/AuthContext";
+import { useEffect } from "react";
 import Navbar from "./components/navbar/Navbar";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -14,73 +13,82 @@ import LeaderboardPage from "./pages/LeaderboardPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import { Loader } from "lucide-react";
+import { useAuthStore } from "./store/useAuthStore";
+import { Toaster } from "sonner";
 
 function AppContent() {
-  const { isLoggedIn } = useContext(AuthContext);
+  const { checkAuth, isCheckingAuth, authUser } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  if (isCheckingAuth) {
+    return <div className="min-h-screen flex items-center justify-center">
+      <Loader size={35} className="animate-spin" />
+      </div> 
+  }
+
+  console.log(authUser)
   const location = useLocation();
 
-  const showNavbar = location.pathname === "/" || isLoggedIn;
-
+  const showNavbar = location.pathname === "/" || authUser;
   return (
     <div className="min-h-screen bg-background text-card-foreground flex flex-col font-sans">
-
-      {showNavbar && <Navbar isPublic={!isLoggedIn} />}
-
+      <Toaster position="top-right"/>
+      {showNavbar && <Navbar isPublic={!authUser} />}
       <Routes>
-
         <Route
           path="/"
-          element={isLoggedIn ? <Navigate to="/dashboard" /> : <Landing />}
+          element={authUser ? <Navigate to="/dashboard" /> : <Landing />}
         />
         <Route
           path="/login"
-          element={isLoggedIn ? <Navigate to="/dashboard" /> : <Login />}
+          element={authUser ? <Navigate to="/dashboard" /> : <Login />}
         />
         <Route
           path="/signup"
-          element={isLoggedIn ? <Navigate to="/dashboard" /> : <Signup />}
+          element={authUser ? <Navigate to="/dashboard" /> : <Signup />}
         />
-
 
         <Route
           path="/dashboard"
-          element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />}
+          element={authUser ? <Dashboard /> : <Navigate to="/login" />}
         />
         <Route
           path="/list-skill"
-          element={isLoggedIn ? <SkillListing /> : <Navigate to="/login" />}
+          element={authUser ? <SkillListing /> : <Navigate to="/login" />}
         />
         <Route
           path="/trade/:id"
-          element={isLoggedIn ? <TradeDetails /> : <Navigate to="/login" />}
+          element={authUser ? <TradeDetails /> : <Navigate to="/login" />}
         />
 
         <Route
           path="/trade"
-          element={isLoggedIn ? <TradePage /> : <Navigate to="/login" />}
+          element={authUser ? <TradePage /> : <Navigate to="/login" />}
         />
 
         <Route
           path="/wallet"
-          element={isLoggedIn ? <WalletScreen /> : <Navigate to="/login" />}
+          element={authUser ? <WalletScreen /> : <Navigate to="/login" />}
         />
 
         <Route
           path="/Leader"
-          element={isLoggedIn ? <LeaderboardPage /> : <Navigate to="/login" />}
+          element={authUser ? <LeaderboardPage /> : <Navigate to="/login" />}
         />
 
         <Route
           path="/notification"
-          element={isLoggedIn ? <NotificationsPage /> : <Navigate to="/login" />}
+          element={authUser ? <NotificationsPage /> : <Navigate to="/login" />}
         />
 
         <Route
           path="/profile"
-          element={isLoggedIn ? <Profile /> : <Navigate to="/login" />}
+          element={authUser ? <Profile /> : <Navigate to="/login" />}
         />
-
-
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>

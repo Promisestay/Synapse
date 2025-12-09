@@ -1,10 +1,10 @@
-import { useContext, useState } from "react"
+import { useState } from "react"
 import { Link, useNavigate, useLocation } from "react-router-dom"
 import { Menu, X, LogOut } from "lucide-react"
-import { AuthContext } from "../../context/AuthContext"
+import { useAuthStore } from "../../store/useAuthStore"
 
 export default function Navbar() {
-  const { currentUser: user, isLoggedIn, logout } = useContext(AuthContext)
+  const { authUser, logout } = useAuthStore()
   const [menuOpen, setMenuOpen] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
@@ -30,13 +30,13 @@ export default function Navbar() {
 
     <nav className=" relative bg-surface/90 backdrop-blur-md border-b border-border py-4 top-0 z-50 transition-all duration-300">
       <div className="container max-w-7xl mx-auto px-6 flex justify-between items-center">
-        <Link to={isLoggedIn ? "/dashboard" : "/"} className="flex items-center group">
+        <Link to={authUser ? "/dashboard" : "/"} className="flex items-center group">
           <img src="./logo2.png" alt="" className="h-[60px] w-[70px]" />
           <span className="text-xl font-bold text-primary tracking-tight font-heading -translate-x-4">Synapse</span>
         </Link>
 
         <div className="hidden md:flex gap-8 items-center">
-          {(!isLoggedIn || path === "/") && (
+          {(!authUser || path === "/") && (
             <Link to="/" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
               Home
             </Link>
@@ -48,7 +48,7 @@ export default function Navbar() {
             </a>
           )}
 
-          {isLoggedIn && (
+          {authUser && (
             <>
               <Link to="/dashboard" className={`text-sm font-medium transition-colors ${path === '/dashboard' ? 'text-primary' : 'text-muted-foreground hover:text-primary'}`}>
                 Dashboard
@@ -70,15 +70,15 @@ export default function Navbar() {
         </div>
 
         <div className="flex gap-4 items-center">
-          {isLoggedIn ? (
+          {authUser ? (
             <>
               <div className="hidden md:flex items-center gap-3">
                 <Link to="/profile" className="text-right hover:opacity-80 transition-opacity">
-                  <p className="text-sm font-semibold text-foreground leading-none">{user?.name || "User"}</p>
+                  <p className="text-sm font-semibold text-foreground leading-none">{authUser?.fullName || "User"}</p>
                   <p className="text-xs text-muted-foreground">Student</p>
                 </Link>
                 <Link to="/profile" className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold border border-primary/20 hover:ring-2 hover:ring-primary/20 transition-all">
-                  {user?.name?.charAt(0) || "U"}
+                  {authUser?.fullName?.charAt(0) || "U"}
                 </Link>
               </div>
               <button
@@ -108,7 +108,7 @@ export default function Navbar() {
 
         {menuOpen && (
           <div className="absolute top-full left-0 right-0 bg-surface border-b border-border shadow-xl md:hidden p-4 flex flex-col gap-2 animate-in slide-in-from-top-2">
-            {(!isLoggedIn || path === "/") && (
+            {(!authUser || path === "/") && (
               <Link to="/" className="p-3 text-sm font-medium text-muted-foreground hover:bg-muted rounded-md" onClick={() => setMenuOpen(false)}>
                 Home
               </Link>
@@ -120,7 +120,7 @@ export default function Navbar() {
               </a>
             )}
 
-            {isLoggedIn ? (
+            {authUser ? (
               <>
                 <Link to="/dashboard" className="p-3 text-sm font-medium text-foreground hover:bg-muted rounded-md" onClick={() => setMenuOpen(false)}>Dashboard</Link>
                 <Link to="/list-skill" className="p-3 text-sm font-medium text-foreground hover:bg-muted rounded-md" onClick={() => setMenuOpen(false)}>List Skill</Link>
