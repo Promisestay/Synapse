@@ -4,6 +4,27 @@ import { useAuthStore } from "../store/useAuthStore"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { axiosInstance } from "../lib/axios"
 import { toast } from "sonner"
+import AddTeachSkillModal from "../components/skills/AddTeachSkillModal"
+import AddLearnSkillModal from "../components/skills/AddLearnSkillModal"
+
+const SKILL_OPTIONS = [
+  "Python",
+  "JavaScript",
+  "React",
+  "Node.js",
+  "Java",
+  "C++",
+  "HTML",
+  "CSS",
+  "Figma",
+  "Graphic Design",
+  "Video Editing",
+  "Data Analytics",
+  "Marketing",
+  "Writing",
+  "French",
+  "Spanish",
+]
 
 export default function Profile() {
   const { data, isLoading, refetch } = useQuery({
@@ -24,6 +45,11 @@ export default function Profile() {
     teach: [],
     learn: [],
   })
+
+  // Modal State
+  const [teachModalOpen, setTeachModalOpen] = useState(false)
+  const [learnModalOpen, setLearnModalOpen] = useState(false)
+
   useEffect(() => {
     if (data) {
       const { email, fullName, bio, aboutMe } = data
@@ -35,7 +61,7 @@ export default function Profile() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (formData) => {
-      const { data } = await axiosInstance.patch("/user/profile", formData)
+      await axiosInstance.patch("/user/profile", formData)
     },
     onSuccess: () => {
       refetch()
@@ -43,17 +69,21 @@ export default function Profile() {
     },
   })
 
+  const {
+    data: skills,
+    refetch: refetchSkills,
+    isLoading: isSkillLoading,
+  } = useQuery({
+    queryKey: ["skills"],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get("/user/skills")
+      return data
+    },
+  })
+
   function handleSave() {
     const { fullName, email, bio, about: aboutMe } = profile
     mutate({ fullName, email, bio, aboutMe })
-  }
-
-  // Helper to add skill (simplistic for now)
-  const addTeachSkill = () => {
-    const skill = prompt("Enter skill to teach:")
-    if (skill) {
-      setProfile((prev) => ({ ...prev, teach: [...prev.teach, skill] }))
-    }
   }
 
   const removeTeachSkill = (index) => {
@@ -63,17 +93,22 @@ export default function Profile() {
     }))
   }
 
-  const addLearnSkill = () => {
-    const skill = prompt("Enter skill you want to learn:")
-    if (skill) {
-      setProfile((prev) => ({ ...prev, learn: [...prev.learn, skill] }))
-    }
-  }
-
   const removeLearnSkill = (index) => {
     setProfile((prev) => ({
       ...prev,
       learn: prev.learn.filter((_, i) => i !== index),
+    }))
+  }
+
+  const handleSaveTeachSkill = (newSkill) => {
+    setProfile((prev) => ({ ...prev, teach: [...prev.teach, newSkill] }))
+  }
+
+  const handleSaveLearnSkill = (newSkill) => {
+    // Learn skills don't have level, but we can default or omit
+    setProfile((prev) => ({
+      ...prev,
+      learn: [...prev.learn, { text: newSkill.name, name: newSkill.name, level: "Beginner" }],
     }))
   }
 
@@ -170,8 +205,96 @@ export default function Profile() {
               )}
             </button>
           </div>
+
+          <div className="h-px bg-slate-200 w-full mt-8 mb-12"></div>
+
+          {/* Skills Sections */}
+          <div className="space-y-12 mb-12">
+            {/* Skills I Can Teach */}
+            <div>
+              <h3 className="text-lg font-bold text-slate-700 mb-6">Skills I Can Teach</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Use profile.teach instead of skills from useQuery, or sync them up if desired. 
+                    User code was mixing skills (from query) and profile.teach (local state). 
+                    Sticking to profile.teach as per previous context for immediate UI feedback. 
+                 */}
+                {skills?.map((skill, i) => (
+                  <div
+                    key={i}
+                    className="bg-slate-200/50 rounded-lg p-1.5 pr-3 flex items-center justify-between group hover:bg-slate-200 transition-colors"
+                  >
+                    <span className="px-3 text-slate-700 font-bold text-sm">{skill.name}</span>
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={`px-3 py-1 rounded-full text-[10px] font-extrabold uppercase border ${
+                          skill.level === "Beginner"
+                            ? "bg-white text-rose-500 border-rose-200"
+                            : skill.level === "Intermediate"
+                            ? "bg-purple-100 text-purple-600 border-purple-200"
+                            : "bg-white text-emerald-600 border-emerald-200"
+                        }`}
+                      >
+                        {skill.level}
+                      </span>
+                      <button
+                        onClick={() => removeTeachSkill(i)}
+                        className="text-slate-400 hover:text-slate-600 transition-colors"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                <button
+                  onClick={() => setTeachModalOpen(true)}
+                  className="bg-slate-200/50 rounded-lg p-3 flex items-center justify-center gap-2 text-slate-500 font-bold text-sm hover:bg-slate-200 transition-colors border-2 border-dashed border-slate-300 hover:border-slate-400"
+                >
+                  <Plus size={16} /> Add Skill
+                </button>
+              </div>
+            </div>
+
+            {/* Skills I Want to Learn */}
+            <div>
+              <h3 className="text-lg font-bold text-slate-700 mb-6">Skills I Want to Learn</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {profile.learn.map((skill, i) => (
+                  <div
+                    key={i}
+                    className="bg-slate-200/50 rounded-lg p-3 flex items-center justify-between group hover:bg-slate-200 transition-colors"
+                  >
+                    <span className="text-slate-700 font-bold text-sm">{skill.name}</span>
+                    <button
+                      onClick={() => removeLearnSkill(i)}
+                      className="text-slate-400 hover:text-slate-600 transition-colors"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
+                <button
+                  onClick={() => setLearnModalOpen(true)}
+                  className="bg-slate-200/50 rounded-lg p-3 flex items-center justify-center gap-2 text-slate-500 font-bold text-sm hover:bg-slate-200 transition-colors border-2 border-dashed border-slate-300 hover:border-slate-400"
+                >
+                  <Plus size={16} /> Add Skill
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
+      <AddTeachSkillModal
+        isOpen={teachModalOpen}
+        onClose={() => setTeachModalOpen(false)}
+        refetch={refetchSkills}
+      />
+
+      <AddLearnSkillModal
+        isOpen={learnModalOpen}
+        onClose={() => setLearnModalOpen(false)}
+        onSave={handleSaveLearnSkill}
+      />
     </div>
   )
 }
