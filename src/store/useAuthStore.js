@@ -29,11 +29,11 @@ export const useAuthStore = create((set, get) => ({
       toast.success("Account created successfully!");
       return { success: true, message: "Signup successful", data: res.data };
     } catch (error) {
-      const message = 
+      const message =
         error.response.data.message || "Something went wrong";
-      toast.error(message);  
+      toast.error(message);
 
-      return { success: false, message}
+      return { success: false, message }
     } finally {
       set({ isSigningUp: false });
     }
@@ -72,5 +72,22 @@ export const useAuthStore = create((set, get) => ({
       console.log("Error in update profile:", error);
       toast.error(error.response.data.message);
     }
+  },
+
+  updateCredits: async (amount) => {
+    // Optimistic update
+    const currentUser = get().authUser;
+    if (!currentUser) return;
+
+    const newCredits = (currentUser.credits || 0) + parseInt(amount);
+
+    // Update UI immediately (mocking backend response for now since we don't have the API endpoint confirmed)
+    // In real app: await axiosInstance.post("/wallet/add-funds", { amount });
+
+    set({
+      authUser: { ...currentUser, credits: newCredits }
+    });
+
+    // toast.success is handled in the UI component, but we could move it here.
   },
 }));

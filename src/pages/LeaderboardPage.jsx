@@ -2,31 +2,25 @@ import { useState } from "react"
 import { Trophy, Medal, Star, TrendingUp, Flame, Award, Crown } from "lucide-react"
 
 const MOCK_LEADERBOARD = [
-  { rank: 1, name: "Sarah Chen", trades: 45, credits: 150, badge: "UI/UX Guru", avatar: "https://i.pravatar.cc/150?u=sarah" },
+  { rank: 1, name: "Sarah Chen", trades: 5, credits: 12, badge: "UI/UX Guru", avatar: "https://i.pravatar.cc/150?u=sarah" },
   {
     rank: 2,
     name: "Mike Davidson",
-    trades: 38,
-    credits: 120,
+    trades: 4,
+    credits: 5,
     badge: "Python Pro",
     avatar: "https://i.pravatar.cc/150?u=mike",
   },
-  { rank: 3, name: "Lisa Kim", trades: 32, credits: 98, badge: "Music Maestro", avatar: "https://i.pravatar.cc/150?u=lisa" },
+  { rank: 3, name: "Lisa Kim", trades: 3, credits: 4, badge: "Music Maestro", avatar: "https://i.pravatar.cc/150?u=lisa" },
   {
     rank: 4,
     name: "Student User.",
-    trades: 28,
-    credits: 85,
+    trades: 3,
+    credits: 3,
     badge: "Rising Star",
     avatar: "https://i.pravatar.cc/150?u=daniel",
-    isCurrentUser: true,
   },
-  { rank: 5, name: "Alex Johnson", trades: 25, credits: 72, badge: "", avatar: "https://i.pravatar.cc/150?u=alex" },
-  { rank: 6, name: "Emma Wilson", trades: 22, credits: 68, badge: "", avatar: "https://i.pravatar.cc/150?u=emma" },
-  { rank: 7, name: "James Lee", trades: 20, credits: 55, badge: "", avatar: "https://i.pravatar.cc/150?u=james" },
-  { rank: 8, name: "Sofia Garcia", trades: 18, credits: 48, badge: "", avatar: "https://i.pravatar.cc/150?u=sofia" },
-  { rank: 9, name: "Ryan Cooper", trades: 15, credits: 42, badge: "", avatar: "https://i.pravatar.cc/150?u=ryan" },
-  { rank: 10, name: "Olivia Brown", trades: 12, credits: 35, badge: "", avatar: "https://i.pravatar.cc/150?u=olivia" },
+  { rank: 5, name: "Alex Johnson", trades: 3, credits: 3, badge: "", avatar: "https://i.pravatar.cc/150?u=alex" },
 ]
 
 const BADGES = [
@@ -169,9 +163,6 @@ export default function LeaderboardPage() {
                   </div>
                 ))}
               </div>
-              <div className="p-4 bg-slate-50 border-t border-border text-center">
-                <button className="text-sm font-semibold text-primary hover:underline">View All Rankings</button>
-              </div>
             </div>
           </div>
 
@@ -207,11 +198,11 @@ export default function LeaderboardPage() {
               <p className="text-sm text-primary-foreground/80 mb-4 relative z-10">Complete 2 more trades to reach the Top 3!</p>
 
               <div className="flex justify-between text-xs font-bold mb-1 opacity-90 relative z-10">
-                <span>Current: 28</span>
-                <span>Goal: 32</span>
+                <span>Current: 3</span>
+                <span>Goal: 5</span>
               </div>
               <div className="w-full h-2 bg-black/20 rounded-full overflow-hidden relative z-10">
-                <div className="w-[85%] h-full bg-white rounded-full"></div>
+                <div className="w-[55%] h-full bg-white rounded-full"></div>
               </div>
             </div>
           </div>

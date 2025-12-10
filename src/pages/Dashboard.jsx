@@ -1,13 +1,12 @@
 import { useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
-import { Zap, Users, TrendingUp } from "lucide-react"
+import { Zap, Users, TrendingUp, Search, X } from "lucide-react"
 import MatchCard from "../components/cards/MatchCard"
 import TradeCard from "../components/cards/TradeCard"
 import { useAuthStore } from "../store/useAuthStore"
 
 export default function Dashboard() {
-  const {authUser} = useAuthStore
-  console.log(authUser);
+  const { authUser } = useAuthStore()
   const navigate = useNavigate()
   const location = useLocation()
   const [activeTab, setActiveTab] = useState(location.state?.activeTab || "matches")
@@ -19,7 +18,19 @@ export default function Dashboard() {
   */
   const mockMatches = []
 
-  const suggestedTrades = []
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+
+  const allSuggestedTrades = [
+    { name: "Sarah J.", skill: "Advanced Python", wants: "Graphic Design", rating: 4.8 },
+    { name: "Mike T.", skill: "Guitar Basics", wants: "French", rating: 4.5 },
+    { name: "Emily R.", skill: "Digital Marketing", wants: "Web Development", rating: 4.9 },
+    { name: "David K.", skill: "Photography", wants: "Video Editing", rating: 4.7 },
+  ]
+
+  const suggestedTrades = searchQuery
+    ? allSuggestedTrades.filter(t => t.skill.toLowerCase().includes(searchQuery.toLowerCase()) || t.wants.toLowerCase().includes(searchQuery.toLowerCase()))
+    : [] // Keep empty initially as per original design, or use allSuggestedTrades if we want to show suggestions by default
 
   return (
     <main className="min-h-[calc(100vh-80px)] py-10 bg-background font-sans">
@@ -27,13 +38,38 @@ export default function Dashboard() {
 
         <div className="flex justify-between items-end mb-10 pb-6 border-b border-border/60 max-md:flex-col max-md:items-start max-md:gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">Welcome back, {authUser?.fullName}! 👋</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">Welcome back, {authUser?.fullName}! </h1>
             <p className="mt-2 text-muted-foreground">Here's what's happening with your skill trades today.</p>
           </div>
-          <button className="px-5 py-2.5 bg-primary hover:bg-primary-dark text-primary-foreground rounded-xl font-semibold shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2" onClick={() => navigate("/list-skill")}>
-            <Zap size={18} />
-            List New Skill
-          </button>
+          <div className="flex items-center gap-3">
+            <div className={`transition-all duration-300 overflow-hidden ${isSearchOpen ? 'w-64 opacity-100' : 'w-0 opacity-0'}`}>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search skills..."
+                  className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-100 focus:border-purple-500 outline-none text-sm font-medium"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <Search size={16} className="text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                setIsSearchOpen(!isSearchOpen)
+                if (isSearchOpen) setSearchQuery("")
+              }}
+              className={`p-2.5 rounded-xl border transition-all ${isSearchOpen ? 'bg-slate-100 border-slate-200 text-slate-700' : 'bg-white border-slate-100 text-slate-500 hover:text-purple-600 hover:border-purple-100 shadow-sm'}`}
+            >
+              {isSearchOpen ? <X size={20} /> : <Search size={20} />}
+            </button>
+
+            <button className="px-5 py-2.5 bg-primary hover:bg-primary-dark text-primary-foreground rounded-xl font-semibold shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2" onClick={() => navigate("/list-skill")}>
+              <Zap size={18} />
+              <span className="hidden sm:inline">List New Skill</span>
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
@@ -55,7 +91,7 @@ export default function Dashboard() {
             </div>
             <div className="relative z-10">
               <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider mb-1">Completed Trades</p>
-              <p className="text-3xl font-extrabold text-foreground">5</p>
+              <p className="text-3xl font-extrabold text-foreground">0</p>
             </div>
           </div>
 
@@ -66,7 +102,7 @@ export default function Dashboard() {
             </div>
             <div className="relative z-10">
               <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider mb-1">Your Rating</p>
-              <p className="text-3xl font-extrabold text-foreground">4.8 <span className="text-lg text-amber-500">⭐</span></p>
+              <p className="text-3xl font-extrabold text-foreground">0 <span className="text-lg text-amber-500">⭐</span></p>
             </div>
           </div>
         </div>
@@ -110,14 +146,24 @@ export default function Dashboard() {
 
           {activeTab === "suggested" && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="flex justify-between items-center mb-6">
-                <p className="text-sm text-muted-foreground">Based on your interests in <span className="font-semibold text-foreground">Python</span> and <span className="font-semibold text-foreground">Graphic Design</span>.</p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                {suggestedTrades.map((trade, idx) => (
-                  <TradeCard key={idx} {...trade} onRequest={() => navigate(`/trade/${idx}`)} />
-                ))}
-              </div>
+              {suggestedTrades.length > 0 ? (
+                <>
+                  <div className="flex justify-between items-center mb-6">
+                    <p className="text-sm text-muted-foreground">
+                      {searchQuery ? `matches found for "${searchQuery}"` : <span>Based on your interests in <span className="font-semibold text-foreground">Python</span> and <span className="font-semibold text-foreground">Graphic Design</span>.</span>}
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                    {suggestedTrades.map((trade, idx) => (
+                      <TradeCard key={idx} {...trade} onRequest={() => navigate(`/trade/${idx}`)} />
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="text-center py-20 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                  <p className="text-muted-foreground font-medium">No suggested trades available yet.</p>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -134,10 +180,10 @@ export default function Dashboard() {
                 <span className="w-2 h-2 rounded-full bg-indigo-500"></span> I Can Teach
               </h3>
               <div className="flex flex-wrap gap-2">
-                {authUser?.teach ? (
+                {authUser?.skillName ? (
                   <span className="bg-white text-indigo-700 border border-indigo-200 shadow-sm rounded-lg px-3 py-1.5 font-semibold text-sm flex items-center gap-2">
-                    {authUser.teach}
-                    {authUser.level && <span className="bg-indigo-100 text-indigo-800 text-xs px-1.5 py-0.5 rounded-full">{authUser.level}</span>}
+                    {authUser.skillName}
+                    {authUser.skillLevel && <span className="bg-indigo-100 text-indigo-800 text-xs px-1.5 py-0.5 rounded-full">{authUser.skillLevel}</span>}
                   </span>
                 ) : (
                   <span className="text-sm text-muted-foreground italic">No skills listed yet</span>

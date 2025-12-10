@@ -1,69 +1,127 @@
-import { useContext, useState, useEffect } from "react"
-import { AuthContext } from "../context/AuthContext"
-import { Camera, Plus } from "lucide-react"
+import { useState, useEffect } from "react"
+import { Loader, Camera, Plus, X, ArrowRight } from "lucide-react"
+import { useAuthStore } from "../store/useAuthStore"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import { axiosInstance } from "../lib/axios"
+import { toast } from "sonner"
+import AddTeachSkillModal from "../components/skills/AddTeachSkillModal"
+import AddLearnSkillModal from "../components/skills/AddLearnSkillModal"
+
+const SKILL_OPTIONS = [
+  "Python",
+  "JavaScript",
+  "React",
+  "Node.js",
+  "Java",
+  "C++",
+  "HTML",
+  "CSS",
+  "Figma",
+  "Graphic Design",
+  "Video Editing",
+  "Data Analytics",
+  "Marketing",
+  "Writing",
+  "French",
+  "Spanish",
+]
 
 export default function Profile() {
-  const { currentUser, updateProfile } = useContext(AuthContext)
-  const [isEditing, setIsEditing] = useState(false)
-
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["profile"],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get("/user/profile")
+      return data
+    },
+  })
   // Initialize from currentUser
   const [profile, setProfile] = useState({
-    name: "",
+    fullName: "",
     email: "",
     bio: "",
     about: "",
+    skillName: "",
+    skillLevel: "",
     teach: [],
-    learn: []
+    learn: [],
   })
 
-  // Update state when currentUser changes (e.g. on load)
+  // Modal State
+  const [teachModalOpen, setTeachModalOpen] = useState(false)
+  const [learnModalOpen, setLearnModalOpen] = useState(false)
+
   useEffect(() => {
-    if (currentUser) {
-      setProfile({
-        name: currentUser.name || "",
-        email: currentUser.email || "",
-        bio: currentUser.bio || "",
-        about: currentUser.about || "",
-        teach: Array.isArray(currentUser.teach) ? currentUser.teach : (currentUser.teach ? [currentUser.teach] : []),
-        learn: Array.isArray(currentUser.learn) ? currentUser.learn : (currentUser.learn ? [currentUser.learn] : [])
+    if (data) {
+      const { email, fullName, bio, aboutMe } = data
+      setProfile((prev) => {
+        return { ...prev, email, fullName, bio: bio ?? "", about: aboutMe ?? "" }
       })
     }
-  }, [currentUser])
+  }, [data])
 
-  const handleSave = () => {
-    updateProfile(profile)
-    setIsEditing(false)
-    alert("Profile saved!")
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (formData) => {
+      await axiosInstance.patch("/user/profile", formData)
+    },
+    onSuccess: () => {
+      refetch()
+      toast.success("Profile updated")
+    },
+  })
+
+  const {
+    data: skills,
+    refetch: refetchSkills,
+    isLoading: isSkillLoading,
+  } = useQuery({
+    queryKey: ["skills"],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get("/user/skills")
+      return data
+    },
+  })
+
+  function handleSave() {
+    const { fullName, email, bio, about: aboutMe } = profile
+    mutate({ fullName, email, bio, aboutMe })
   }
 
-  // Helper to add skill (simplistic for now)
-  const addTeachSkill = () => {
-    const skill = prompt("Enter skill to teach:")
-    if (skill) {
-      setProfile(prev => ({ ...prev, teach: [...prev.teach, skill] }))
-    }
+  const removeTeachSkill = (index) => {
+    setProfile((prev) => ({
+      ...prev,
+      teach: prev.teach.filter((_, i) => i !== index),
+    }))
   }
 
-  const addLearnSkill = () => {
-    const skill = prompt("Enter skill you want to learn:")
-    if (skill) {
-      setProfile(prev => ({ ...prev, learn: [...prev.learn, skill] }))
-    }
+  const removeLearnSkill = (index) => {
+    setProfile((prev) => ({
+      ...prev,
+      learn: prev.learn.filter((_, i) => i !== index),
+    }))
+  }
+
+  const handleSaveTeachSkill = (newSkill) => {
+    setProfile((prev) => ({ ...prev, teach: [...prev.teach, newSkill] }))
+  }
+
+  const handleSaveLearnSkill = (newSkill) => {
+    // Learn skills don't have level, but we can default or omit
+    setProfile((prev) => ({
+      ...prev,
+      learn: [...prev.learn, { text: newSkill.name, name: newSkill.name, level: "Beginner" }],
+    }))
   }
 
   return (
     <div className="min-h-screen bg-white p-4 md:p-8 font-sans">
       <div className="max-w-[1000px] mx-auto bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden">
-
         <div className="p-8 md:p-12">
-
           {/* Top Section: Avatar + Fields */}
           <div className="flex flex-col md:flex-row gap-10 items-start mb-12">
-
             {/* Avatar */}
             <div className="relative shrink-0">
               <div className="w-32 h-32 rounded-full bg-blue-800 text-white flex items-center justify-center text-5xl font-bold border-4 border-white shadow-lg uppercase">
-                {profile.name.charAt(0) || "U"}
+                {(data?.fullName?.charAt(0) ?? "U").toUpperCase()}
               </div>
               <button className="absolute bottom-1 right-1 p-2 bg-white rounded-full shadow-md border border-slate-100 text-slate-600 hover:text-purple-600 transition-colors">
                 <Camera size={18} />
@@ -73,27 +131,33 @@ export default function Profile() {
             {/* Main Info Fields */}
             <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Full Name</label>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">
+                  Full Name
+                </label>
                 <input
                   type="text"
-                  value={profile.name}
-                  onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                  value={profile.fullName}
+                  onChange={(e) => setProfile({ ...profile, fullName: e.target.value })}
                   className="w-full bg-slate-200/50 rounded-lg p-3 text-slate-900 font-medium border border-transparent focus:border-purple-300 focus:bg-white transition-all outline-none"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Email</label>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">
+                  Email
+                </label>
                 <input
                   type="email"
-                  value={profile.email}
+                  value={data?.email ?? ""}
                   disabled
                   className="w-full bg-slate-100 rounded-lg p-3 text-slate-500 font-medium border border-transparent cursor-not-allowed"
                 />
               </div>
 
               <div className="md:col-span-2 space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Bio</label>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">
+                  Bio
+                </label>
                 <input
                   type="text"
                   value={profile.bio}
@@ -118,65 +182,119 @@ export default function Profile() {
                 onChange={(e) => setProfile({ ...profile, about: e.target.value })}
                 placeholder="Tell us about yourself..."
               ></textarea>
-              <div className="absolute bottom-3 left-6 text-[10px] text-slate-400">{profile.about.length} characters</div>
-            </div>
-          </div>
-
-          {/* Skills I Can Teach */}
-          <div className="mb-12">
-            <h3 className="text-xl font-bold text-slate-700 mb-6">Skills I Can Teach</h3>
-            <div className="flex flex-wrap gap-4">
-              {profile.teach.length > 0 ? profile.teach.map((skill, index) => (
-                <div key={index} className="bg-slate-200/50 px-4 py-3 rounded-lg text-sm font-bold text-slate-700 text-center border border-transparent hover:border-slate-300 transition-colors">
-                  {skill}
-                </div>
-              )) : (
-                <div className="text-slate-400 text-sm italic py-2">No skills listed yet.</div>
-              )}
-              <button
-                onClick={addTeachSkill}
-                className="flex items-center justify-center gap-2 bg-slate-200 hover:bg-slate-300 px-4 py-3 rounded-lg text-sm font-bold text-slate-700 transition-colors"
-              >
-                <Plus size={16} /> Add Skill
-              </button>
-            </div>
-          </div>
-
-          {/* Skills I Want to Learn */}
-          <div className="mb-16">
-            <h3 className="text-xl font-bold text-slate-700 mb-6">Skills I Want to Learn</h3>
-            <div className="flex flex-wrap gap-4">
-              {profile.learn.length > 0 ? profile.learn.map((skill, index) => (
-                <div key={index} className="bg-slate-200/50 px-4 py-3 rounded-lg text-sm font-bold text-slate-700 text-center border border-transparent hover:border-slate-300 transition-colors">
-                  {skill}
-                </div>
-              )) : (
-                <div className="text-slate-400 text-sm italic py-2">No learning interests listed yet.</div>
-              )}
-              <button
-                onClick={addLearnSkill}
-                className="flex items-center justify-center gap-2 bg-slate-200 hover:bg-slate-300 px-4 py-3 rounded-lg text-sm font-bold text-slate-700 transition-colors"
-              >
-                <Plus size={16} /> Add Skill
-              </button>
+              <div className="absolute bottom-3 left-6 text-[10px] text-slate-400">
+                {profile.about.length} characters
+              </div>
             </div>
           </div>
 
           {/* Footer Actions */}
           <div className="flex justify-end gap-4 pt-4">
-            <button className="px-8 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg transition-colors">
-              Cancel
-            </button>
             <button
               onClick={handleSave}
-              className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg shadow-blue-200 transition-all hover:-translate-y-0.5"
+              disabled={isPending}
+              className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white flex justify-center items-center gap-2 font-bold rounded-lg shadow-lg shadow-blue-200 transition-all hover:-translate-y-0.5"
             >
-              Save Changes
+              {isPending ? (
+                <Loader className="animate-spin" />
+              ) : (
+                <>
+                  <span>Save Changes</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
             </button>
           </div>
 
+          <div className="h-px bg-slate-200 w-full mt-8 mb-12"></div>
+
+          {/* Skills Sections */}
+          <div className="space-y-12 mb-12">
+            {/* Skills I Can Teach */}
+            <div>
+              <h3 className="text-lg font-bold text-slate-700 mb-6">Skills I Can Teach</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Use profile.teach instead of skills from useQuery, or sync them up if desired. 
+                    User code was mixing skills (from query) and profile.teach (local state). 
+                    Sticking to profile.teach as per previous context for immediate UI feedback. 
+                 */}
+                {skills?.map((skill, i) => (
+                  <div
+                    key={i}
+                    className="bg-slate-200/50 rounded-lg p-1.5 pr-3 flex items-center justify-between group hover:bg-slate-200 transition-colors"
+                  >
+                    <span className="px-3 text-slate-700 font-bold text-sm">{skill.name}</span>
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={`px-3 py-1 rounded-full text-[10px] font-extrabold uppercase border ${
+                          skill.level === "Beginner"
+                            ? "bg-white text-rose-500 border-rose-200"
+                            : skill.level === "Intermediate"
+                            ? "bg-purple-100 text-purple-600 border-purple-200"
+                            : "bg-white text-emerald-600 border-emerald-200"
+                        }`}
+                      >
+                        {skill.level}
+                      </span>
+                      <button
+                        onClick={() => removeTeachSkill(i)}
+                        className="text-slate-400 hover:text-slate-600 transition-colors"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                <button
+                  onClick={() => setTeachModalOpen(true)}
+                  className="bg-slate-200/50 rounded-lg p-3 flex items-center justify-center gap-2 text-slate-500 font-bold text-sm hover:bg-slate-200 transition-colors border-2 border-dashed border-slate-300 hover:border-slate-400"
+                >
+                  <Plus size={16} /> Add Skill
+                </button>
+              </div>
+            </div>
+
+            {/* Skills I Want to Learn */}
+            <div>
+              <h3 className="text-lg font-bold text-slate-700 mb-6">Skills I Want to Learn</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {profile.learn.map((skill, i) => (
+                  <div
+                    key={i}
+                    className="bg-slate-200/50 rounded-lg p-3 flex items-center justify-between group hover:bg-slate-200 transition-colors"
+                  >
+                    <span className="text-slate-700 font-bold text-sm">{skill.name}</span>
+                    <button
+                      onClick={() => removeLearnSkill(i)}
+                      className="text-slate-400 hover:text-slate-600 transition-colors"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
+                <button
+                  onClick={() => setLearnModalOpen(true)}
+                  className="bg-slate-200/50 rounded-lg p-3 flex items-center justify-center gap-2 text-slate-500 font-bold text-sm hover:bg-slate-200 transition-colors border-2 border-dashed border-slate-300 hover:border-slate-400"
+                >
+                  <Plus size={16} /> Add Skill
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
+      <AddTeachSkillModal
+        isOpen={teachModalOpen}
+        onClose={() => setTeachModalOpen(false)}
+        refetch={refetchSkills}
+      />
+
+      <AddLearnSkillModal
+        isOpen={learnModalOpen}
+        onClose={() => setLearnModalOpen(false)}
+        onSave={handleSaveLearnSkill}
+      />
     </div>
   )
 }
