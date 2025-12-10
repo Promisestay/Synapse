@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
-import { Layers, Zap, User, Lock, Mail, ArrowRight, BookOpen, AlertCircle } from "lucide-react"
+import { Layers, Zap, User, Lock, Mail, ArrowRight, BookOpen, AlertCircle, Loader } from "lucide-react"
 import { useAuthStore } from "../store/useAuthStore"
 
 
