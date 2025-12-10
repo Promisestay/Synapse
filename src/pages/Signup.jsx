@@ -1,17 +1,28 @@
 import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
-import { Layers, Zap, User, Lock, Mail, ArrowRight, BookOpen, AlertCircle, Loader } from "lucide-react"
+import { Layers, Zap, User, Lock, Mail, ArrowRight, BookOpen, AlertCircle } from "lucide-react"
 import { useAuthStore } from "../store/useAuthStore"
 
-
 const skillOptions = [
-  "Python", "JavaScript", "React", "Web Development",
-  "Graphic Design", "UI/UX Design", "Video Editing",
-  "Data Analysis", "Machine Learning", "Photography",
-  "Music Production", "Writing", "Public Speaking",
-  "French", "Spanish", "Guitar", "Piano", "Other",
+  "Python",
+  "JavaScript",
+  "React",
+  "Web Development",
+  "Graphic Design",
+  "UI/UX Design",
+  "Video Editing",
+  "Data Analysis",
+  "Machine Learning",
+  "Photography",
+  "Music Production",
+  "Writing",
+  "Public Speaking",
+  "French",
+  "Spanish",
+  "Guitar",
+  "Piano",
+  "Other",
 ]
-
 
 export default function Signup() {
   const { signup, isSigningUp } = useAuthStore()
@@ -22,42 +33,40 @@ export default function Signup() {
     skillName: "",
     skillLevel: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   })
 
   const [error, setError] = useState("")
 
   const handleChange = (e) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
-      return;
+      setError("Passwords do not match")
+      return
     }
     const { name, ...rest } = formData
     const result = signup({ ...rest, fullName: name })
     setError("")
 
     if (result.success) {
-      navigate("/dashboard");
+      navigate("/dashboard")
     } else {
-      setError(result.message);
+      setError(result.message)
     }
   }
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 font-sans p-6 relative overflow-hidden">
-
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-purple-200/40 rounded-full blur-[100px]"></div>
         <div className="absolute bottom-[-10%] left-[-5%] w-[40%] h-[40%] bg-indigo-200/40 rounded-full blur-[100px]"></div>
       </div>
 
       <div className="w-full max-w-lg bg-white rounded-3xl shadow-xl shadow-purple-100 border border-white relative z-10 overflow-hidden">
-
         <div className="bg-purple-600 h-2"></div>
 
         <div className="p-8 sm:p-10">
@@ -118,16 +127,16 @@ export default function Signup() {
                   <select
                     id="teach"
                     name="skillName"
-
                     className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-100 focus:border-purple-500 outline-none transition-all font-medium text-slate-900 placeholder:text-slate-400"
                     value={formData.skillName}
                     onChange={handleChange}
                     required
                   >
-
                     <option value="">Select a skill...</option>
                     {skillOptions.map((skill) => (
-                      <option key={skill} value={skill}>{skill}</option>
+                      <option key={skill} value={skill}>
+                        {skill}
+                      </option>
                     ))}
                   </select>
                   <Zap className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
@@ -192,8 +201,14 @@ export default function Signup() {
               disabled={isSigningUp}
               className="w-full py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-purple-200 transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 group mt-2"
             >
-              {isSigningUp ? <Loader className="animate-spin" /> : <><span>Sign In</span>
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></>}
+              {isSigningUp ? (
+                <Loader className="animate-spin" />
+              ) : (
+                <>
+                  Sign Up
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
             </button>
           </form>
 
