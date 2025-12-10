@@ -189,10 +189,11 @@ export default function Signup() {
 
             <button
               type="submit"
+              disabled={isSigningUp}
               className="w-full py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-purple-200 transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 group mt-2"
             >
-              Sign Up
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              {isSigningUp ? <Loader className="animate-spin" /> : <><span>Sign In</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></>}
             </button>
           </form>
 

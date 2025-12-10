@@ -1,14 +1,12 @@
 import { useState, useContext } from "react"
 import { AuthContext } from "../context/AuthContext"
-import { CreditCard, Wallet, ArrowUpRight, ArrowDownLeft, Clock, Shield, Plus, Zap} from "lucide-react"
+import { CreditCard, Wallet, ArrowUpRight, ArrowDownLeft, Clock, Shield, Plus, Zap } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { useAuthStore } from "../store/useAuthStore"
+import StripePayment from "../components/StripePayment"
 
 const TRANSACTION_HISTORY = [
-  { id: 1, type: "received", user: "Mike Davidson", amount: 5, date: "Today, 2:30 PM", status: "Completed" },
-  { id: 2, type: "spent", user: "Sarah Chen", amount: 3, date: "Yesterday, 10:00 AM", status: "Completed" },
-  { id: 3, type: "received", user: "Alice Smith", amount: 8, date: "Oct 24, 2024", status: "Completed" },
-  { id: 4, type: "spent", user: "John Doe", amount: 4, date: "Oct 20, 2024", status: "Completed" },
+  { id: 1, type: "received", user: "Welcome Bonus", amount: 20, date: "Upon Signup", status: "Completed" },
 ]
 
 export default function WalletScreen() {
@@ -57,7 +55,7 @@ export default function WalletScreen() {
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-indigo-100 font-medium mb-1">Total Balance</p>
-                    <h2 className="text-5xl font-extrabold tracking-tight">{authUser?.credits || 0}.00 <span className="text-2xl opacity-60 font-medium">Credits</span></h2>
+                    <h2 className="text-5xl font-extrabold tracking-tight">{authUser?.credits || 20}.00 <span className="text-2xl opacity-60 font-medium">Credits</span></h2>
                   </div>
                   <div className="p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20">
                     <CreditCard size={24} />
@@ -200,13 +198,25 @@ export default function WalletScreen() {
                 </div>
               </div>
 
-              <button
-                className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold text-lg shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                disabled={!amount}
-                onClick={handleAddFunds}
-              >
-                Exchange <Zap size={20} className="fill-current" />
-              </button>
+              {!amount ? (
+                <button
+                  className="w-full py-4 bg-slate-200 text-slate-400 rounded-xl font-bold text-lg cursor-not-allowed flex items-center justify-center gap-2"
+                  disabled
+                >
+                  Select Amount <Zap size={20} className="fill-current" />
+                </button>
+              ) : (
+                <StripePayment
+                  amount={amount}
+                  onSuccess={(amt) => {
+                    updateCredits(amt)
+                    alert(`Successfully added ${amt} credits!`)
+                    setIsAddFundsOpen(false)
+                    setAmount("")
+                  }}
+                  onCancel={() => setIsAddFundsOpen(false)}
+                />
+              )}
 
               <p className="text-center text-[10px] text-slate-500 mt-4 font-bold">
                 By exchanging, you agree to our <a href="#" className="underline">Community Guidelines</a>

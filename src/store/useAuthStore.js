@@ -73,4 +73,21 @@ export const useAuthStore = create((set, get) => ({
       toast.error(error.response.data.message);
     }
   },
+
+  updateCredits: async (amount) => {
+    // Optimistic update
+    const currentUser = get().authUser;
+    if (!currentUser) return;
+
+    const newCredits = (currentUser.credits || 0) + parseInt(amount);
+
+    // Update UI immediately (mocking backend response for now since we don't have the API endpoint confirmed)
+    // In real app: await axiosInstance.post("/wallet/add-funds", { amount });
+
+    set({
+      authUser: { ...currentUser, credits: newCredits }
+    });
+
+    // toast.success is handled in the UI component, but we could move it here.
+  },
 }));
