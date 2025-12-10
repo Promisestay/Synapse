@@ -1,5 +1,5 @@
 import { useState } from "react"
-import {  Link } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import { Layers, Zap, User, Lock, Mail, ArrowRight, BookOpen, AlertCircle } from "lucide-react"
 import { useAuthStore } from "../store/useAuthStore"
 
@@ -12,8 +12,9 @@ const skillOptions = [
   "French", "Spanish", "Guitar", "Piano", "Other",
 ]
 
+
 export default function Signup() {
-  const {signup, isSigningUp} = useAuthStore()
+  const { signup, isSigningUp } = useAuthStore()
 
   const [formData, setFormData] = useState({
     name: "",
@@ -34,11 +35,11 @@ export default function Signup() {
     e.preventDefault()
 
     if (formData.password !== formData.confirmPassword) {
-    setError("Passwords do not match");
-    return;
-  }
-    const {name, ...rest} = formData
-    const result = signup({...rest, fullName: name})
+      setError("Passwords do not match");
+      return;
+    }
+    const { name, ...rest } = formData
+    const result = signup({ ...rest, fullName: name })
     setError("")
 
     if (result.success) {

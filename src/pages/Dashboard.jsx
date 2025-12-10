@@ -6,8 +6,7 @@ import TradeCard from "../components/cards/TradeCard"
 import { useAuthStore } from "../store/useAuthStore"
 
 export default function Dashboard() {
-  const {authUser} = useAuthStore
-  console.log(authUser);
+  const {authUser} = useAuthStore()
   const navigate = useNavigate()
   const location = useLocation()
   const [activeTab, setActiveTab] = useState(location.state?.activeTab || "matches")
@@ -27,7 +26,7 @@ export default function Dashboard() {
 
         <div className="flex justify-between items-end mb-10 pb-6 border-b border-border/60 max-md:flex-col max-md:items-start max-md:gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">Welcome back, {authUser?.fullName}! 👋</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">Welcome back, {authUser?.fullName}! </h1>
             <p className="mt-2 text-muted-foreground">Here's what's happening with your skill trades today.</p>
           </div>
           <button className="px-5 py-2.5 bg-primary hover:bg-primary-dark text-primary-foreground rounded-xl font-semibold shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2" onClick={() => navigate("/list-skill")}>
@@ -55,7 +54,7 @@ export default function Dashboard() {
             </div>
             <div className="relative z-10">
               <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider mb-1">Completed Trades</p>
-              <p className="text-3xl font-extrabold text-foreground">5</p>
+              <p className="text-3xl font-extrabold text-foreground">0</p>
             </div>
           </div>
 
@@ -66,7 +65,7 @@ export default function Dashboard() {
             </div>
             <div className="relative z-10">
               <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider mb-1">Your Rating</p>
-              <p className="text-3xl font-extrabold text-foreground">4.8 <span className="text-lg text-amber-500">⭐</span></p>
+              <p className="text-3xl font-extrabold text-foreground">0 <span className="text-lg text-amber-500">⭐</span></p>
             </div>
           </div>
         </div>
@@ -110,6 +109,8 @@ export default function Dashboard() {
 
           {activeTab === "suggested" && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              {suggestedTrades.length > 0 ? (
+                <>
               <div className="flex justify-between items-center mb-6">
                 <p className="text-sm text-muted-foreground">Based on your interests in <span className="font-semibold text-foreground">Python</span> and <span className="font-semibold text-foreground">Graphic Design</span>.</p>
               </div>
@@ -118,6 +119,12 @@ export default function Dashboard() {
                   <TradeCard key={idx} {...trade} onRequest={() => navigate(`/trade/${idx}`)} />
                 ))}
               </div>
+              </>
+              ) : (
+                <div className="text-center py-20 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                  <p className="text-muted-foreground font-medium">No suggested trades available yet.</p>
+                </div>
+              )}    
             </div>
           )}
         </div>
@@ -134,10 +141,10 @@ export default function Dashboard() {
                 <span className="w-2 h-2 rounded-full bg-indigo-500"></span> I Can Teach
               </h3>
               <div className="flex flex-wrap gap-2">
-                {authUser?.teach ? (
+                {authUser?.skillName ? (
                   <span className="bg-white text-indigo-700 border border-indigo-200 shadow-sm rounded-lg px-3 py-1.5 font-semibold text-sm flex items-center gap-2">
-                    {authUser.teach}
-                    {authUser.level && <span className="bg-indigo-100 text-indigo-800 text-xs px-1.5 py-0.5 rounded-full">{authUser.level}</span>}
+                    {authUser.skillName}
+                    {authUser.skillLevel && <span className="bg-indigo-100 text-indigo-800 text-xs px-1.5 py-0.5 rounded-full">{authUser.skillLevel}</span>}
                   </span>
                 ) : (
                   <span className="text-sm text-muted-foreground italic">No skills listed yet</span>

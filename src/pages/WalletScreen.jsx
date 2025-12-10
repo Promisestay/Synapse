@@ -1,7 +1,8 @@
 import { useState, useContext } from "react"
 import { AuthContext } from "../context/AuthContext"
-import { CreditCard, Wallet, ArrowUpRight, ArrowDownLeft, Clock, Shield, Plus } from "lucide-react"
+import { CreditCard, Wallet, ArrowUpRight, ArrowDownLeft, Clock, Shield, Plus, Zap} from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { useAuthStore } from "../store/useAuthStore"
 
 const TRANSACTION_HISTORY = [
   { id: 1, type: "received", user: "Mike Davidson", amount: 5, date: "Today, 2:30 PM", status: "Completed" },
@@ -11,7 +12,7 @@ const TRANSACTION_HISTORY = [
 ]
 
 export default function WalletScreen() {
-  const { currentUser, updateCredits } = useContext(AuthContext)
+  const { authUser, updateCredits } = useAuthStore()
   const navigate = useNavigate()
   const [isAddFundsOpen, setIsAddFundsOpen] = useState(false)
   const [amount, setAmount] = useState("")
@@ -56,7 +57,7 @@ export default function WalletScreen() {
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-indigo-100 font-medium mb-1">Total Balance</p>
-                    <h2 className="text-5xl font-extrabold tracking-tight">{currentUser?.credits || 0}.00 <span className="text-2xl opacity-60 font-medium">Credits</span></h2>
+                    <h2 className="text-5xl font-extrabold tracking-tight">{authUser?.credits || 0}.00 <span className="text-2xl opacity-60 font-medium">Credits</span></h2>
                   </div>
                   <div className="p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20">
                     <CreditCard size={24} />
@@ -70,7 +71,7 @@ export default function WalletScreen() {
                     </div>
                     <div>
                       <p className="text-xs text-indigo-100 font-bold uppercase">Earned</p>
-                      <p className="font-bold text-lg">120 Cr</p>
+                      <p className="font-bold text-lg">0 Cr</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -79,7 +80,7 @@ export default function WalletScreen() {
                     </div>
                     <div>
                       <p className="text-xs text-indigo-100 font-bold uppercase">Spent</p>
-                      <p className="font-bold text-lg">75 Cr</p>
+                      <p className="font-bold text-lg">0 Cr</p>
                     </div>
                   </div>
                 </div>

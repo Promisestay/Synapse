@@ -1,34 +1,39 @@
-import { useContext, useState, useEffect } from "react"
-import { AuthContext } from "../context/AuthContext"
-import { Camera, Plus } from "lucide-react"
+import { useState, useEffect } from "react"
+import { Camera, Plus, X } from "lucide-react"
+import { useAuthStore } from "../store/useAuthStore"
 
 export default function Profile() {
-  const { currentUser, updateProfile } = useContext(AuthContext)
+  const { authUser, updateProfile } = useAuthStore()
   const [isEditing, setIsEditing] = useState(false)
+
 
   // Initialize from currentUser
   const [profile, setProfile] = useState({
-    name: "",
+    fullName: "",
     email: "",
     bio: "",
     about: "",
-    teach: [],
+    skillName: "",
+    skillLevel: "",
+    teach: [], 
     learn: []
   })
 
-  // Update state when currentUser changes (e.g. on load)
+  // Update state when authUser changes (e.g. on load)
   useEffect(() => {
-    if (currentUser) {
+    if (authUser) {
       setProfile({
-        name: currentUser.name || "",
-        email: currentUser.email || "",
-        bio: currentUser.bio || "",
-        about: currentUser.about || "",
-        teach: Array.isArray(currentUser.teach) ? currentUser.teach : (currentUser.teach ? [currentUser.teach] : []),
-        learn: Array.isArray(currentUser.learn) ? currentUser.learn : (currentUser.learn ? [currentUser.learn] : [])
+        fullName: authUser.fullName || "",
+        email: authUser.email || "",
+        bio: authUser.bio || "",
+        about: authUser.about || "",
+        skillName: authUser.skillName || "",
+        skillLevel: authUser.skillLevel || "",
+        teach: Array.isArray(authUser.teach) ? authUser.teach : [],
+        learn: Array.isArray(authUser.learn) ? authUser.learn : (authUser.learn ? [authUser.learn] : [])
       })
     }
-  }, [currentUser])
+  }, [authUser])
 
   const handleSave = () => {
     updateProfile(profile)
@@ -44,11 +49,25 @@ export default function Profile() {
     }
   }
 
+  const removeTeachSkill = (index) => {
+    setProfile(prev => ({
+      ...prev,
+      teach: prev.teach.filter((_, i) => i !== index)
+    }))
+  }
+
   const addLearnSkill = () => {
     const skill = prompt("Enter skill you want to learn:")
     if (skill) {
       setProfile(prev => ({ ...prev, learn: [...prev.learn, skill] }))
     }
+  }
+
+  const removeLearnSkill = (index) => {
+    setProfile(prev => ({
+      ...prev,
+      learn: prev.learn.filter((_, i) => i !== index)
+    }))
   }
 
   return (
@@ -63,7 +82,7 @@ export default function Profile() {
             {/* Avatar */}
             <div className="relative shrink-0">
               <div className="w-32 h-32 rounded-full bg-blue-800 text-white flex items-center justify-center text-5xl font-bold border-4 border-white shadow-lg uppercase">
-                {profile.name.charAt(0) || "U"}
+                {(profile?.fullName?.charAt(0) ?? "U").toUpperCase()}
               </div>
               <button className="absolute bottom-1 right-1 p-2 bg-white rounded-full shadow-md border border-slate-100 text-slate-600 hover:text-purple-600 transition-colors">
                 <Camera size={18} />
@@ -76,8 +95,8 @@ export default function Profile() {
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Full Name</label>
                 <input
                   type="text"
-                  value={profile.name}
-                  onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                  value={profile.fullName || ""}
+                  onChange={(e) => setProfile({ ...profile, fullName: e.target.value })}
                   className="w-full bg-slate-200/50 rounded-lg p-3 text-slate-900 font-medium border border-transparent focus:border-purple-300 focus:bg-white transition-all outline-none"
                 />
               </div>
@@ -122,16 +141,50 @@ export default function Profile() {
             </div>
           </div>
 
+          <div className="mb-12">
+            <h3 className="text-xl font-bold text-slate-700 mb-6">Primary Skill</h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Skill Name</label>
+                <input
+                  type="text"
+                  value={profile.skillName}
+                  onChange={(e) => setProfile({ ...profile, skillName: e.target.value })}
+                  placeholder="e.g., JavaScript, Graphic Design"
+                  className="w-full bg-slate-200/50 rounded-lg p-3 text-slate-900 font-medium border border-transparent focus:border-purple-300 focus:bg-white transition-all outline-none"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Skill Level</label>
+                <select
+                  value={profile.skillLevel}
+                  onChange={(e) => setProfile({ ...profile, skillLevel: e.target.value })}
+                  className="w-full bg-slate-200/50 rounded-lg p-3 text-slate-900 font-medium border border-transparent focus:border-purple-300 focus:bg-white transition-all outline-none"
+                >
+                  <option value="Beginner">Beginner</option>
+                  <option value="Intermediate">Intermediate</option>
+                  <option value="Expert">Expert</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
           {/* Skills I Can Teach */}
           <div className="mb-12">
-            <h3 className="text-xl font-bold text-slate-700 mb-6">Skills I Can Teach</h3>
+            <h3 className="text-xl font-bold text-slate-700 mb-6">Additional Skills I Can Teach</h3>
             <div className="flex flex-wrap gap-4">
               {profile.teach.length > 0 ? profile.teach.map((skill, index) => (
-                <div key={index} className="bg-slate-200/50 px-4 py-3 rounded-lg text-sm font-bold text-slate-700 text-center border border-transparent hover:border-slate-300 transition-colors">
+                <div key={index} className="bg-slate-200/50 px-4 py-3 rounded-lg text-sm font-bold text-slate-700 text-center border border-transparent hover:border-slate-300 transition-colors flex items-center gap-2 group">
                   {skill}
+                  <button
+                    onClick={() => removeTeachSkill(index)}
+                    className="text-slate-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                  >
+                    <X size={14} />
+                  </button>
                 </div>
               )) : (
-                <div className="text-slate-400 text-sm italic py-2">No skills listed yet.</div>
+                <div className="text-slate-400 text-sm italic py-2">No additional skills listed yet.</div>
               )}
               <button
                 onClick={addTeachSkill}
@@ -147,8 +200,14 @@ export default function Profile() {
             <h3 className="text-xl font-bold text-slate-700 mb-6">Skills I Want to Learn</h3>
             <div className="flex flex-wrap gap-4">
               {profile.learn.length > 0 ? profile.learn.map((skill, index) => (
-                <div key={index} className="bg-slate-200/50 px-4 py-3 rounded-lg text-sm font-bold text-slate-700 text-center border border-transparent hover:border-slate-300 transition-colors">
+                <div key={index} className="bg-slate-200/50 px-4 py-3 rounded-lg text-sm font-bold text-slate-700 text-center border border-transparent hover:border-slate-300 transition-colors flex items-center gap-2 group">
                   {skill}
+                  <button
+                    onClick={() => removeLearnSkill(index)}
+                    className="text-slate-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                  >
+                    <X size={14} />
+                  </button>
                 </div>
               )) : (
                 <div className="text-slate-400 text-sm italic py-2">No learning interests listed yet.</div>
@@ -164,7 +223,9 @@ export default function Profile() {
 
           {/* Footer Actions */}
           <div className="flex justify-end gap-4 pt-4">
-            <button className="px-8 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg transition-colors">
+            <button 
+            onClick={() => window.history.back()}
+            className="px-8 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg transition-colors">
               Cancel
             </button>
             <button
