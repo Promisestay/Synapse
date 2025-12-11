@@ -20,7 +20,7 @@ export default function Landing() {
               <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-cyan-400">Learn Anything.</span>
             </h1>
             <p className="text-lg lg:text-xl leading-relaxed text-slate-300 max-w-lg">
-              Join a community of students who share knowledge without spending money.
+              Join a community of students who share knowledge.
               Teach what you know, learn what you want.
             </p>
             <div className="flex gap-4 flex-wrap">
