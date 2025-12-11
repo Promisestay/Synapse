@@ -18,6 +18,7 @@ import { loadStripe } from "@stripe/stripe-js"
 import { Elements } from "@stripe/react-stripe-js"
 import PaymentForm from "../components/PaymentForm"
 import { useQuery } from "@tanstack/react-query"
+import { getWalletDetails } from "../lib/queries"
 
 const TRANSACTION_HISTORY = [
   {
@@ -33,20 +34,13 @@ const TRANSACTION_HISTORY = [
 const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_STRIPE_KEY)
 
 export default function WalletScreen() {
-  const { authUser, updateCredits } = useAuthStore()
   const navigate = useNavigate()
   const [isAddFundsOpen, setIsAddFundsOpen] = useState(false)
   const [amount, setAmount] = useState("")
   const [isLoading, setIsloading] = useState(false)
   const [clientSecret, setClientSecret] = useState("")
 
-  const { data, isLoading: isFetchingWallet } = useQuery({
-    queryKey: ["wallet"],
-    queryFn: async () => {
-      const { data } = await axiosInstance.get("/wallet/details")
-      return data
-    },
-  })
+  const { data } = getWalletDetails()
 
   const credit = data?.credit ?? 0
 
