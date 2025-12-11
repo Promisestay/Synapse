@@ -54,7 +54,7 @@ export default function Navbar() {
                 Dashboard
               </Link>
               <Link to="/list-skill" className={`text-sm font-medium transition-colors ${path === '/list-skill' ? 'text-primary' : 'text-muted-foreground hover:text-primary'}`}>
-                List Skill
+                Skill Exchange
               </Link>
               <Link to="/wallet" className={`text-sm font-medium transition-colors ${path === '/wallet' ? 'text-primary' : 'text-muted-foreground hover:text-primary'}`}>
                 Wallet

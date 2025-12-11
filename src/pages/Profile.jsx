@@ -4,6 +4,7 @@ import { useAuthStore } from "../store/useAuthStore"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { axiosInstance } from "../lib/axios"
 import { toast } from "sonner"
+import ConfirmModal from "../components/ConfirmModal"
 import AddTeachSkillModal from "../components/skills/AddTeachSkillModal"
 import AddLearnSkillModal from "../components/skills/AddLearnSkillModal"
 
@@ -81,37 +82,22 @@ export default function Profile() {
     },
   })
 
+  const { mutateAsync: deleteTeachSkill, isPending: isDeletingSkill } = useMutation({
+    mutationFn: async (id) => {
+      await axiosInstance.delete(`/user/skills/${id}`)
+    },
+    onSuccess: () => {
+      refetchSkills()
+      toast.success("Skill removed")
+    },
+  })
+
   function handleSave() {
     const { fullName, email, bio, about: aboutMe } = profile
     mutate({ fullName, email, bio, aboutMe })
   }
 
-  const removeTeachSkill = (index) => {
-    setProfile((prev) => ({
-      ...prev,
-      teach: prev.teach.filter((_, i) => i !== index),
-    }))
-  }
-
-  const removeLearnSkill = (index) => {
-    setProfile((prev) => ({
-      ...prev,
-      learn: prev.learn.filter((_, i) => i !== index),
-    }))
-  }
-
-  const handleSaveTeachSkill = (newSkill) => {
-    setProfile((prev) => ({ ...prev, teach: [...prev.teach, newSkill] }))
-  }
-
-  const handleSaveLearnSkill = (newSkill) => {
-    // Learn skills don't have level, but we can default or omit
-    setProfile((prev) => ({
-      ...prev,
-      learn: [...prev.learn, { text: newSkill.name, name: newSkill.name, level: "Beginner" }],
-    }))
-  }
-
+  const [skillDeleteId, setSkillDeteId] = useState("")
   return (
     <div className="min-h-screen bg-white p-4 md:p-8 font-sans">
       <div className="max-w-[1000px] mx-auto bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden">
@@ -214,13 +200,9 @@ export default function Profile() {
             <div>
               <h3 className="text-lg font-bold text-slate-700 mb-6">Skills I Can Teach</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Use profile.teach instead of skills from useQuery, or sync them up if desired. 
-                    User code was mixing skills (from query) and profile.teach (local state). 
-                    Sticking to profile.teach as per previous context for immediate UI feedback. 
-                 */}
                 {skills?.map((skill, i) => (
                   <div
-                    key={i}
+                    key={skill.id}
                     className="bg-slate-200/50 rounded-lg p-1.5 pr-3 flex items-center justify-between group hover:bg-slate-200 transition-colors"
                   >
                     <span className="px-3 text-slate-700 font-bold text-sm">{skill.name}</span>
@@ -237,7 +219,7 @@ export default function Profile() {
                         {skill.level}
                       </span>
                       <button
-                        onClick={() => removeTeachSkill(i)}
+                        onClick={() => setSkillDeteId(skill.id)}
                         className="text-slate-400 hover:text-slate-600 transition-colors"
                       >
                         <X size={14} />
@@ -265,7 +247,7 @@ export default function Profile() {
                   >
                     <span className="text-slate-700 font-bold text-sm">{skill.name}</span>
                     <button
-                      onClick={() => removeLearnSkill(i)}
+                      // onClick={}
                       className="text-slate-400 hover:text-slate-600 transition-colors"
                     >
                       <X size={14} />
@@ -293,8 +275,20 @@ export default function Profile() {
       <AddLearnSkillModal
         isOpen={learnModalOpen}
         onClose={() => setLearnModalOpen(false)}
-        onSave={handleSaveLearnSkill}
+        refetch={refetchSkills}
       />
+
+      {Boolean(skillDeleteId) && (
+        <ConfirmModal
+          onClose={() => setSkillDeteId("")}
+          onConfirm={async () => {
+            await deleteTeachSkill(skillDeleteId)
+            refetch()
+          }}
+          isLoading={isDeletingSkill}
+          message="Are you sure you want to remove this skill?"
+        />
+      )}
     </div>
   )
 }

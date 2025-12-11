@@ -2,10 +2,7 @@ import { useState } from "react"
 import { Bell, Check, User, MessageSquare, Trash2 } from "lucide-react"
 
 const MOCK_NOTIFICATIONS = [
-  { id: 1, type: "trade_request", title: "New Trade Request", message: "Sarah M. wants to learn Python from you.", time: "2 min ago", read: false },
-  { id: 2, type: "message", title: "New Message", message: "Mike D: Hey, are we still on for tomorrow?", time: "1 hour ago", read: false },
-  { id: 3, type: "system", title: "Welcome to Synapse", message: "Thanks for joining! Complete your profile to get started.", time: "1 day ago", read: true },
-  { id: 4, type: "trade_confirmed", title: "Trade Confirmed", message: "Your session with Alice S. has been confirmed.", time: "2 days ago", read: true },
+  { id: 1, type: "system", title: "Welcome Bonus", message: "You received 20 credits as a welcome bonus!", time: "Just now", read: false },
 ]
 
 export default function NotificationsPage() {

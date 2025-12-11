@@ -11,11 +11,7 @@ export default function Dashboard() {
   const location = useLocation()
   const [activeTab, setActiveTab] = useState(location.state?.activeTab || "matches")
 
-  /* 
-    Matches and suggested trades should ideally come from the backend based on the user's skills.
-    For now, we start with empty arrays to satisfy the requirement that the dashboard is empty 
-    until there is relevant data.
-  */
+
   const mockMatches = []
 
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -80,7 +76,7 @@ export default function Dashboard() {
             </div>
             <div className="relative z-10">
               <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider mb-1">Total Credits</p>
-              <p className="text-3xl font-extrabold text-foreground">{authUser?.credits || 0}</p>
+              <p className="text-3xl font-extrabold text-foreground">{authUser?.credits || 20}</p>
             </div>
           </div>
 

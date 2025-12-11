@@ -1,6 +1,6 @@
 import { useState} from "react"
 import { useNavigate, Link } from "react-router-dom"
-import { User, Lock, ArrowRight ,Loader} from "lucide-react"
+import { User, Lock, ArrowRight, Loader} from "lucide-react"
 import { useAuthStore } from "../store/useAuthStore"
 
 export default function Login() {
