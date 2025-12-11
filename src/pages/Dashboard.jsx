@@ -15,16 +15,50 @@ export default function Dashboard() {
   const { data } = getWalletDetails()
   const credit = data?.credit ?? 0
 
-  const mockMatches = []
+  const mockMatches = [
+        {
+      id: 1,
+      from: "Sarah Chen",
+      role: "UI/UX Designer",
+      score: 95,
+      teaches: "Figma",
+      wants: "Python",
+      avatar: "https://i.pravatar.cc/150?u=sarah",
+      credits: 15,
+      availableTime: "Mon, 4PM"
+    },
+    {
+      id: 2,
+      from: "Mike Ross",
+      role: "Law Student",
+      score: 88,
+      teaches: "Public Speaking",
+      wants: "Data Science",
+      avatar: "https://i.pravatar.cc/150?u=mike",
+      credits: 12,
+      availableTime: "Wed, 2PM"
+    },
+    {
+      id: 3,
+      from: "Jessica Pearson",
+      role: "MBA Student",
+      score: 82,
+      teaches: "Leadership",
+      wants: "React",
+      avatar: "https://i.pravatar.cc/150?u=jessica",
+      credits: 20,
+      availableTime: "Fri, 10AM"
+    },
+  ]
 
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 
   const allSuggestedTrades = [
-    { name: "Sarah J.", skill: "Advanced Python", wants: "Graphic Design", rating: 4.8 },
-    { name: "Mike T.", skill: "Guitar Basics", wants: "French", rating: 4.5 },
-    { name: "Emily R.", skill: "Digital Marketing", wants: "Web Development", rating: 4.9 },
-    { name: "David K.", skill: "Photography", wants: "Video Editing", rating: 4.7 },
+    { name: "Sarah J.", skill: "Advanced Python", learnSkill: "Graphic Design", teachSkill: "Leadership", rating: 4.8 },
+    { name: "Mike T.", skill: "Guitar Basics", learnSkill: "French", teachSkill: "Public Speaking", rating: 4.5 },
+    { name: "Emily R.", skill: "Digital Marketing", learnSkill: "Web Development", teachSkill: "Python", rating: 4.9 },
+    { name: "David K.", skill: "Photography", learnSkill: "Video Editing", teachSkill: "Data Analysis", rating: 4.7 },
   ]
 
   const suggestedTrades = searchQuery
@@ -33,7 +67,7 @@ export default function Dashboard() {
           t.skill.toLowerCase().includes(searchQuery.toLowerCase()) ||
           t.wants.toLowerCase().includes(searchQuery.toLowerCase()),
       )
-    : [] // Keep empty initially as per original design, or use allSuggestedTrades if we want to show suggestions by default
+    : allSuggestedTrades // Keep empty initially as per original design, or use allSuggestedTrades if we want to show suggestions by default
 
   return (
     <main className="min-h-[calc(100vh-80px)] py-10 bg-background font-sans">
@@ -190,9 +224,9 @@ export default function Dashboard() {
                         `matches found for "${searchQuery}"`
                       ) : (
                         <span>
-                          Based on your interests in{" "}
-                          <span className="font-semibold text-foreground">Python</span> and{" "}
-                          <span className="font-semibold text-foreground">Graphic Design</span>.
+                          Based on your interests
+                          {/* <span className="font-semibold text-foreground">Python</span> and{" "}
+                          <span className="font-semibold text-foreground">Graphic Design</span>. */}
                         </span>
                       )}
                     </p>
