@@ -31,7 +31,7 @@ function PaymentForm({ clientSecret, closeModal }) {
         setErrorMessage(error.message || "Something went wrong")
       } else if (paymentIntent && paymentIntent.status === "succeeded") {
         closeModal()
-        toast.success("Payment processing, Refresh later to confirm your balance")
+        toast.success("Payment processed sucessfully")
       }
     } catch (error) {
       console.error(error)
