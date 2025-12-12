@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   CreditCard,
   Wallet,
@@ -11,13 +11,11 @@ import {
   Lock,
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
-import { useAuthStore } from "../store/useAuthStore"
 import { toast } from "sonner"
 import { axiosInstance } from "../lib/axios"
 import { loadStripe } from "@stripe/stripe-js"
 import { Elements } from "@stripe/react-stripe-js"
 import PaymentForm from "../components/PaymentForm"
-import { useQuery } from "@tanstack/react-query"
 import { getWalletDetails } from "../lib/queries"
 
 const TRANSACTION_HISTORY = [
@@ -40,9 +38,23 @@ export default function WalletScreen() {
   const [isLoading, setIsloading] = useState(false)
   const [clientSecret, setClientSecret] = useState("")
 
-  const { data } = getWalletDetails()
+  const { data, refetch } = getWalletDetails()
 
   const credit = data?.credit ?? 0
+
+  useEffect(() => {
+    const eventSource = new EventSource(
+      import.meta.env.VITE_API_BASE_URL + "/wallet/updates",
+      { withCredentials: true },
+    )
+
+    eventSource.onmessage = (e) => {
+      //console.log(e.data)
+      refetch()
+    }
+
+    return () => eventSource.close()
+  }, [])
 
   const handleCheckout = async () => {
     if (amount < 1000) {
