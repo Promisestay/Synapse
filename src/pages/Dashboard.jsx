@@ -5,6 +5,44 @@ import MatchCard from "../components/cards/MatchCard"
 import TradeCard from "../components/cards/TradeCard"
 import { useAuthStore } from "../store/useAuthStore"
 import { getLearn, getSkills, getWalletDetails } from "../lib/queries"
+import { useQuery } from "@tanstack/react-query"
+import { axiosInstance } from "../lib/axios"
+
+const mockMatches = [
+  {
+    id: 1,
+    from: "Sarah Chen",
+    role: "UI/UX Designer",
+    score: 95,
+    teaches: "Figma",
+    wants: "Python",
+    avatar: "https://i.pravatar.cc/150?u=sarah",
+    credits: 15,
+    availableTime: "Mon, 4PM",
+  },
+  {
+    id: 2,
+    from: "Mike Ross",
+    role: "Law Student",
+    score: 88,
+    teaches: "Public Speaking",
+    wants: "Data Science",
+    avatar: "https://i.pravatar.cc/150?u=mike",
+    credits: 12,
+    availableTime: "Wed, 2PM",
+  },
+  {
+    id: 3,
+    from: "Jessica Pearson",
+    role: "MBA Student",
+    score: 82,
+    teaches: "Leadership",
+    wants: "React",
+    avatar: "https://i.pravatar.cc/150?u=jessica",
+    credits: 20,
+    availableTime: "Fri, 10AM",
+  },
+]
 
 export default function Dashboard() {
   const { authUser } = useAuthStore()
@@ -19,83 +57,16 @@ export default function Dashboard() {
 
   const { data: learn } = getLearn()
 
-  const mockMatches = [
-    {
-      id: 1,
-      from: "Sarah Chen",
-      role: "UI/UX Designer",
-      score: 95,
-      teaches: "Figma",
-      wants: "Python",
-      avatar: "https://i.pravatar.cc/150?u=sarah",
-      credits: 15,
-      availableTime: "Mon, 4PM",
-    },
-    {
-      id: 2,
-      from: "Mike Ross",
-      role: "Law Student",
-      score: 88,
-      teaches: "Public Speaking",
-      wants: "Data Science",
-      avatar: "https://i.pravatar.cc/150?u=mike",
-      credits: 12,
-      availableTime: "Wed, 2PM",
-    },
-    {
-      id: 3,
-      from: "Jessica Pearson",
-      role: "MBA Student",
-      score: 82,
-      teaches: "Leadership",
-      wants: "React",
-      avatar: "https://i.pravatar.cc/150?u=jessica",
-      credits: 20,
-      availableTime: "Fri, 10AM",
-    },
-  ]
-
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 
-  const allSuggestedTrades = [
-    {
-      name: "Sarah J.",
-      skill: "Advanced Python",
-      learnSkill: "Graphic Design",
-      teachSkill: "Leadership",
-      rating: 4.8,
+  const { data: suggestions } = useQuery({
+    queryKey: ["suggestions"],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get("/trade/suggestion")
+      return data
     },
-    {
-      name: "Mike T.",
-      skill: "Guitar Basics",
-      learnSkill: "French",
-      teachSkill: "Public Speaking",
-      rating: 4.5,
-    },
-    {
-      name: "Emily R.",
-      skill: "Digital Marketing",
-      learnSkill: "Web Development",
-      teachSkill: "Python",
-      rating: 4.9,
-    },
-    {
-      name: "David K.",
-      skill: "Photography",
-      learnSkill: "Video Editing",
-      teachSkill: "Data Analysis",
-      rating: 4.7,
-    },
-  ]
-
-  const suggestedTrades = searchQuery
-    ? allSuggestedTrades.filter(
-        (t) =>
-          t.skill.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          t.wants.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
-    : allSuggestedTrades // Keep empty initially as per original design, or use allSuggestedTrades if we want to show suggestions by default
+  })
 
   return (
     <main className="min-h-[calc(100vh-80px)] py-10 bg-background font-sans">
@@ -244,7 +215,7 @@ export default function Dashboard() {
 
           {activeTab === "suggested" && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              {suggestedTrades.length > 0 ? (
+              {suggestions && suggestions.length > 0 ? (
                 <>
                   <div className="flex justify-between items-center mb-6">
                     <p className="text-sm text-muted-foreground">
@@ -260,8 +231,17 @@ export default function Dashboard() {
                     </p>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                    {suggestedTrades.map((trade, idx) => (
-                      <TradeCard key={idx} {...trade} onRequest={() => navigate(`/trade/`)} />
+                    {suggestions.map((suggestion) => (
+                      <TradeCard
+                        key={suggestion.id}
+                        name={suggestion.user.fullName}
+                        rating={4.5}
+                        teachSkill={suggestion.name}
+                        learnSkill={suggestion.learning}
+                        credits={suggestion.credit}
+                        time={"Fri, 10AM"}
+                        onRequest={() => navigate(`/trade`)}
+                      />
                     ))}
                   </div>
                 </>

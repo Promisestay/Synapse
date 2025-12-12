@@ -1,12 +1,23 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
-import { ArrowLeft, Video, Calendar, Clock, MessageSquare, Check, X, Star, Shield, Send } from "lucide-react"
+import {
+  ArrowLeft,
+  Video,
+  Calendar,
+  Clock,
+  MessageSquare,
+  Check,
+  X,
+  Star,
+  Shield,
+  Send,
+} from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
 // Mock trade data
 const MOCK_TRADE = {
   id: 1,
-  status: "pending", 
+  status: "pending",
   proposedTime: "Tomorrow, 2:00 PM",
   duration: "1 hour",
   mode: "video",
@@ -34,8 +45,18 @@ const MOCK_TRADE = {
       text: "Hey! I saw your Python listing. I'd love to trade for some UI/UX lessons!",
       time: "2 hours ago",
     },
-    { id: 2, sender: "You", text: "Sounds great! I'm free tomorrow afternoon if that works?", time: "1 hour ago" },
-    { id: 3, sender: "Sarah Chen", text: "Perfect! 2 PM works for me. See you then!", time: "30 min ago" },
+    {
+      id: 2,
+      sender: "You",
+      text: "Sounds great! I'm free tomorrow afternoon if that works?",
+      time: "1 hour ago",
+    },
+    {
+      id: 3,
+      sender: "Sarah Chen",
+      text: "Perfect! 2 PM works for me. See you then!",
+      time: "30 min ago",
+    },
   ],
 }
 
@@ -43,22 +64,20 @@ export default function TradePage() {
   const [trade] = useState(MOCK_TRADE)
   const [newMessage, setNewMessage] = useState("")
   const [showConfirmModal, setShowConfirmModal] = useState(false)
-  const Navigate = useNavigate()
+  const navigate = useNavigate()
 
   const handleSendMessage = (e) => {
     e.preventDefault()
-    
+
     setNewMessage("")
   }
 
   return (
     <div className="min-h-screen bg-background pb-20 font-sans">
-
       <main className="max-w-[1000px] mx-auto px-6 py-8">
-       
-        <button 
+        <button
           className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-primary transition-colors mb-8 group"
-          onClick={() => Navigate("/dashboard", { state: { activeTab: "suggested" } })}
+          onClick={() => navigate(-1)}
         >
           <div className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center group-hover:border-primary/50 transition-colors shadow-sm">
             <ArrowLeft size={16} />
@@ -67,26 +86,24 @@ export default function TradePage() {
         </button>
 
         <div className="grid md:grid-cols-3 gap-8">
-
           <div className="md:col-span-2 space-y-6">
- 
             <div className="bg-white rounded-2xl border border-border p-6 shadow-sm">
               <div className="flex items-center justify-between mb-6">
                 <h1 className="text-2xl font-bold text-foreground">Trade Session</h1>
                 <span
-                  className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${trade.status === "pending"
+                  className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${
+                    trade.status === "pending"
                       ? "bg-amber-50 text-amber-700 border border-amber-100"
                       : trade.status === "confirmed"
-                        ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
-                        : "bg-blue-50 text-blue-700 border border-blue-100"
-                    }`}
+                      ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
+                      : "bg-blue-50 text-blue-700 border border-blue-100"
+                  }`}
                 >
                   {trade.status}
                 </span>
               </div>
 
               <div className="flex flex-col sm:flex-row items-center justify-between bg-slate-50/50 rounded-xl p-8 mb-8 border border-slate-100 relative overflow-hidden">
-
                 <div className="absolute inset-0 opacity-30 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] bg-size-[16px_16px]"></div>
 
                 <div className="flex flex-col items-center text-center relative z-10">
@@ -116,7 +133,12 @@ export default function TradePage() {
                 <div className="flex flex-col items-center px-4 py-6 sm:py-0 relative z-10">
                   <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-200 text-slate-400">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+                      />
                     </svg>
                   </div>
                   <span className="text-xs font-bold text-emerald-600 mt-2 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
@@ -152,17 +174,23 @@ export default function TradePage() {
               <div className="grid grid-cols-3 gap-4 mb-8">
                 <div className="bg-slate-50/50 border border-slate-100 rounded-xl p-4 text-center hover:bg-slate-50 transition-colors">
                   <Calendar className="w-5 h-5 text-indigo-500 mx-auto mb-2" />
-                  <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">Date & Time</p>
+                  <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">
+                    Date & Time
+                  </p>
                   <p className="font-bold text-foreground text-sm mt-1">{trade.proposedTime}</p>
                 </div>
                 <div className="bg-slate-50/50 border border-slate-100 rounded-xl p-4 text-center hover:bg-slate-50 transition-colors">
                   <Clock className="w-5 h-5 text-indigo-500 mx-auto mb-2" />
-                  <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">Duration</p>
+                  <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">
+                    Duration
+                  </p>
                   <p className="font-bold text-foreground text-sm mt-1">{trade.duration}</p>
                 </div>
                 <div className="bg-slate-50/50 border border-slate-100 rounded-xl p-4 text-center hover:bg-slate-50 transition-colors">
                   <Video className="w-5 h-5 text-indigo-500 mx-auto mb-2" />
-                  <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">Mode</p>
+                  <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">
+                    Mode
+                  </p>
                   <p className="font-bold text-foreground text-sm mt-1 capitalize">{trade.mode}</p>
                 </div>
               </div>
@@ -201,15 +229,25 @@ export default function TradePage() {
 
               <div className="flex-1 p-6 overflow-y-auto space-y-4 bg-slate-50/30">
                 {trade.messages.map((msg) => (
-                  <div key={msg.id} className={`flex ${msg.sender === "You" ? "justify-end" : "justify-start"}`}>
+                  <div
+                    key={msg.id}
+                    className={`flex ${msg.sender === "You" ? "justify-end" : "justify-start"}`}
+                  >
                     <div
-                      className={`max-w-[80%] px-5 py-3 rounded-2xl text-sm ${msg.sender === "You"
+                      className={`max-w-[80%] px-5 py-3 rounded-2xl text-sm ${
+                        msg.sender === "You"
                           ? "bg-primary text-primary-foreground rounded-tr-sm shadow-md shadow-primary/10"
                           : "bg-white border border-slate-200 text-foreground rounded-tl-sm shadow-sm"
-                        }`}
+                      }`}
                     >
                       <p>{msg.text}</p>
-                      <p className={`text-[10px] mt-1.5 font-medium ${msg.sender === "You" ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+                      <p
+                        className={`text-[10px] mt-1.5 font-medium ${
+                          msg.sender === "You"
+                            ? "text-primary-foreground/70"
+                            : "text-muted-foreground"
+                        }`}
+                      >
                         {msg.time}
                       </p>
                     </div>
@@ -217,7 +255,10 @@ export default function TradePage() {
                 ))}
               </div>
 
-              <form onSubmit={handleSendMessage} className="p-4 bg-white border-t border-border flex gap-2">
+              <form
+                onSubmit={handleSendMessage}
+                className="p-4 bg-white border-t border-border flex gap-2"
+              >
                 <input
                   type="text"
                   placeholder="Type a message..."
@@ -236,23 +277,44 @@ export default function TradePage() {
           </div>
 
           <div className="space-y-6">
-         
             <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-6">
               <div className="flex items-center gap-2 text-blue-700 font-bold mb-3 text-sm">
                 <Shield className="w-4 h-4" />
                 Safe Trading Guarantee
               </div>
               <p className="text-sm text-blue-600/80 leading-relaxed font-medium">
-                Your credits are held in secure escrow. They are only released to the teacher once both parties confirm the session was successfully completed.
+                Your credits are held in secure escrow. They are only released to the teacher once
+                both parties confirm the session was successfully completed.
               </p>
             </div>
 
             <div className="bg-white border boundary-border rounded-xl p-6 shadow-sm">
               <h3 className="text-sm font-bold text-foreground mb-4">Helpful Resources</h3>
               <ul className="space-y-3">
-                <li><a href="#" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">How to verify a session</a></li>
-                <li><a href="#" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">Community Guidelines</a></li>
-                <li><a href="#" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">Report an issue</a></li>
+                <li>
+                  <a
+                    href="#"
+                    className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-2"
+                  >
+                    How to verify a session
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-2"
+                  >
+                    Community Guidelines
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-2"
+                  >
+                    Report an issue
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
@@ -267,8 +329,8 @@ export default function TradePage() {
             </div>
             <h2 className="text-xl font-bold text-foreground mb-2 text-center">Confirm Trade?</h2>
             <p className="text-muted-foreground mb-8 text-center text-sm leading-relaxed">
-              <span className="font-bold text-foreground">{trade.credits} credits</span> will be held in escrow until the session is
-              complete.
+              <span className="font-bold text-foreground">{trade.credits} credits</span> will be
+              held in escrow until the session is complete.
             </p>
             <div className="flex gap-3">
               <button
