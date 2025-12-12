@@ -32,13 +32,6 @@ const TRANSACTION_HISTORY = [
 
 const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_STRIPE_KEY)
 
-const formatter = new Intl.DateTimeFormat("en-US", {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-  weekday: "short",
-})
-
 function formatDate(date) {
   const now = new Date()
   const input = new Date(date)

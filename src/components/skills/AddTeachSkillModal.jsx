@@ -24,7 +24,7 @@ const SKILL_OPTIONS = [
 ]
 
 export default function AddTeachSkillModal({ isOpen, onClose, refetch }) {
-  const [form, setForm] = useState({ name: "", level: "" })
+  const [form, setForm] = useState({ name: "", level: "", credit: "" })
   const { isPending, mutate } = useMutation({
     mutationFn: async (formData) => {
       const { data } = await axiosInstance.post("/user/skills", formData)
@@ -84,6 +84,19 @@ export default function AddTeachSkillModal({ isOpen, onClose, refetch }) {
               <option value="expert">Expert</option>
             </select>
           </div>
+
+          {/* Credit Input */}
+          <div className="bg-slate-200/50 rounded-lg px-4 py-3 flex items-center gap-2 relative">
+            <input
+              type="number"
+              name="credit"
+              className="w-full bg-transparent border-none outline-none font-bold text-slate-700 placeholder:text-slate-500 text-sm"
+              placeholder="Credit"
+              value={form.credit}
+              onChange={handleChange}
+            />
+          </div>
+          
         </div>
 
         <div className="flex justify-end">

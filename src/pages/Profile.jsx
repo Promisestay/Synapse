@@ -6,6 +6,7 @@ import { toast } from "sonner"
 import ConfirmModal from "../components/ConfirmModal"
 import AddTeachSkillModal from "../components/skills/AddTeachSkillModal"
 import AddLearnSkillModal from "../components/skills/AddLearnSkillModal"
+import { getLearn, getSkills } from "../lib/queries"
 
 export default function Profile() {
   const { data, refetch } = useQuery({
@@ -50,13 +51,10 @@ export default function Profile() {
     },
   })
 
-  const { data: skills, refetch: refetchSkills } = useQuery({
-    queryKey: ["skills"],
-    queryFn: async () => {
-      const { data } = await axiosInstance.get("/user/skills")
-      return data
-    },
-  })
+  const { data: skills, refetch: refetchSkills } = getSkills()
+
+
+  const { data: learn, refetch: refetchLearn } = getLearn()
 
   const { mutateAsync: deleteTeachSkill, isPending: isDeletingSkill } = useMutation({
     mutationFn: async (id) => {
@@ -68,12 +66,23 @@ export default function Profile() {
     },
   })
 
+  const { mutateAsync: deleteTeachLearn, isPending: isDeletingLearn } = useMutation({
+    mutationFn: async (id) => {
+      await axiosInstance.delete(`/user/learn/${id}`)
+    },
+    onSuccess: () => {
+      refetchLearn()
+      toast.success("Learning Preference removed")
+    },
+  })
+
   function handleSave() {
     const { fullName, email, bio, about: aboutMe } = profile
     mutate({ fullName, email, bio, aboutMe })
   }
 
   const [skillDeleteId, setSkillDeteId] = useState("")
+  const [learnDeleteId, setLearnDeteId] = useState("")
   return (
     <div className="min-h-screen bg-white p-4 md:p-8 font-sans">
       <div className="max-w-[1000px] mx-auto bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden">
@@ -216,14 +225,14 @@ export default function Profile() {
             <div>
               <h3 className="text-lg font-bold text-slate-700 mb-6">Skills I Want to Learn</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {profile.learn.map((skill, i) => (
+                {learn?.map((learn, i) => (
                   <div
-                    key={i}
+                    key={learn.id}
                     className="bg-slate-200/50 rounded-lg p-3 flex items-center justify-between group hover:bg-slate-200 transition-colors"
                   >
-                    <span className="text-slate-700 font-bold text-sm">{skill.name}</span>
+                    <span className="text-slate-700 font-bold text-sm">{learn.name}</span>
                     <button
-                      // onClick={}
+                      onClick={() => setLearnDeteId(learn.id)}
                       className="text-slate-400 hover:text-slate-600 transition-colors"
                     >
                       <X size={14} />
@@ -251,7 +260,7 @@ export default function Profile() {
       <AddLearnSkillModal
         isOpen={learnModalOpen}
         onClose={() => setLearnModalOpen(false)}
-        refetch={refetchSkills}
+        refetch={refetchLearn}
       />
 
       {Boolean(skillDeleteId) && (
@@ -262,6 +271,18 @@ export default function Profile() {
             refetch()
           }}
           isLoading={isDeletingSkill}
+          message="Are you sure you want to remove this skill?"
+        />
+      )}
+
+      {Boolean(learnDeleteId) && (
+        <ConfirmModal
+          onClose={() => setLearnDeteId("")}
+          onConfirm={async () => {
+            await deleteTeachLearn(learnDeleteId)
+            refetch()
+          }}
+          isLoading={isDeletingLearn}
           message="Are you sure you want to remove this skill?"
         />
       )}

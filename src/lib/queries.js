@@ -10,3 +10,24 @@ export function getWalletDetails() {
     },
   })
 }
+
+
+export function getSkills() {
+  return useQuery({
+    queryKey: ["skills"],
+    queryFn: async () => {
+      const {data} = await axiosInstance.get("/user/skills")
+      return data
+    },
+  })
+}
+
+export function getLearn() {
+  return useQuery({
+    queryKey: ["learn"],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get("/user/learn")
+      return data
+    },
+  })
+}

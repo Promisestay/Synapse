@@ -1,10 +1,10 @@
-import { useState } from "react"
+import { Fragment, useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { Zap, Users, TrendingUp, Search, X } from "lucide-react"
 import MatchCard from "../components/cards/MatchCard"
 import TradeCard from "../components/cards/TradeCard"
 import { useAuthStore } from "../store/useAuthStore"
-import { getWalletDetails } from "../lib/queries"
+import { getLearn, getSkills, getWalletDetails } from "../lib/queries"
 
 export default function Dashboard() {
   const { authUser } = useAuthStore()
@@ -15,8 +15,12 @@ export default function Dashboard() {
   const { data } = getWalletDetails()
   const credit = data?.credit ?? 0
 
+  const { data: skills } = getSkills()
+
+  const { data: learn } = getLearn()
+
   const mockMatches = [
-        {
+    {
       id: 1,
       from: "Sarah Chen",
       role: "UI/UX Designer",
@@ -25,7 +29,7 @@ export default function Dashboard() {
       wants: "Python",
       avatar: "https://i.pravatar.cc/150?u=sarah",
       credits: 15,
-      availableTime: "Mon, 4PM"
+      availableTime: "Mon, 4PM",
     },
     {
       id: 2,
@@ -36,7 +40,7 @@ export default function Dashboard() {
       wants: "Data Science",
       avatar: "https://i.pravatar.cc/150?u=mike",
       credits: 12,
-      availableTime: "Wed, 2PM"
+      availableTime: "Wed, 2PM",
     },
     {
       id: 3,
@@ -47,7 +51,7 @@ export default function Dashboard() {
       wants: "React",
       avatar: "https://i.pravatar.cc/150?u=jessica",
       credits: 20,
-      availableTime: "Fri, 10AM"
+      availableTime: "Fri, 10AM",
     },
   ]
 
@@ -55,10 +59,34 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("")
 
   const allSuggestedTrades = [
-    { name: "Sarah J.", skill: "Advanced Python", learnSkill: "Graphic Design", teachSkill: "Leadership", rating: 4.8 },
-    { name: "Mike T.", skill: "Guitar Basics", learnSkill: "French", teachSkill: "Public Speaking", rating: 4.5 },
-    { name: "Emily R.", skill: "Digital Marketing", learnSkill: "Web Development", teachSkill: "Python", rating: 4.9 },
-    { name: "David K.", skill: "Photography", learnSkill: "Video Editing", teachSkill: "Data Analysis", rating: 4.7 },
+    {
+      name: "Sarah J.",
+      skill: "Advanced Python",
+      learnSkill: "Graphic Design",
+      teachSkill: "Leadership",
+      rating: 4.8,
+    },
+    {
+      name: "Mike T.",
+      skill: "Guitar Basics",
+      learnSkill: "French",
+      teachSkill: "Public Speaking",
+      rating: 4.5,
+    },
+    {
+      name: "Emily R.",
+      skill: "Digital Marketing",
+      learnSkill: "Web Development",
+      teachSkill: "Python",
+      rating: 4.9,
+    },
+    {
+      name: "David K.",
+      skill: "Photography",
+      learnSkill: "Video Editing",
+      teachSkill: "Data Analysis",
+      rating: 4.7,
+    },
   ]
 
   const suggestedTrades = searchQuery
@@ -265,18 +293,21 @@ export default function Dashboard() {
                 <span className="w-2 h-2 rounded-full bg-indigo-500"></span> I Can Teach
               </h3>
               <div className="flex flex-wrap gap-2">
-                {authUser?.skillName ? (
-                  <span className="bg-white text-indigo-700 border border-indigo-200 shadow-sm rounded-lg px-3 py-1.5 font-semibold text-sm flex items-center gap-2">
-                    {authUser.skillName}
-                    {authUser.skillLevel && (
-                      <span className="bg-indigo-100 text-indigo-800 text-xs px-1.5 py-0.5 rounded-full">
-                        {authUser.skillLevel}
+                {skills && skills.length > 0 ? (
+                  <Fragment>
+                    {skills.map((skill) => (
+                      <span className="bg-white text-indigo-700 border border-indigo-200 shadow-sm rounded-lg px-3 py-1.5 font-semibold text-sm flex items-center gap-2">
+                        {skill.name}
+                        <span className="bg-indigo-100 text-indigo-800 text-xs px-1.5 py-0.5 rounded-full">
+                          {skill.level}
+                        </span>
                       </span>
-                    )}
-                  </span>
+                    ))}
+                  </Fragment>
                 ) : (
                   <span className="text-sm text-muted-foreground italic">No skills listed yet</span>
                 )}
+
                 <span
                   className="bg-white text-indigo-700 border border-indigo-200 shadow-sm border-dashed rounded-lg px-3 py-1.5 font-semibold text-sm opacity-60 hover:opacity-100 cursor-pointer transition-opacity"
                   onClick={() => navigate("/profile")}
@@ -291,10 +322,22 @@ export default function Dashboard() {
                 <span className="w-2 h-2 rounded-full bg-purple-500"></span> I Want to Learn
               </h3>
               <div className="flex flex-wrap gap-2">
+                {learn && learn.length > 0 ? (
+                  <Fragment>
+                    {learn.map((learn) => (
+                      <span className="bg-white text-indigo-700 border border-indigo-200 shadow-sm rounded-lg px-3 py-1.5 font-semibold text-sm flex items-center gap-2">
+                        {learn.name}
+                      </span>
+                    ))}
+                  </Fragment>
+                ) : (
+                  <span className="text-sm text-muted-foreground italic">No skills listed yet</span>
+                )}
                 {/* Future: Map currentUser.learn skills here if available */}
+
                 <span
                   className="bg-white text-purple-700 border border-purple-200 shadow-sm border-dashed rounded-lg px-3 py-1.5 font-semibold text-sm opacity-60 hover:opacity-100 cursor-pointer transition-opacity"
-                  onClick={() => navigate("/list-skill")}
+                  onClick={() => navigate("/profile")}
                 >
                   + Add
                 </span>
