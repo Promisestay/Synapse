@@ -69,7 +69,6 @@ export default function WalletScreen() {
   const [clientSecret, setClientSecret] = useState("")
 
   const { data, refetch } = getWalletDetails()
-  console.log(data)
 
   const credit = data?.credit ?? 0
 
