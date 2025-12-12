@@ -261,7 +261,7 @@ export default function Dashboard() {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
                     {suggestedTrades.map((trade, idx) => (
-                      <TradeCard key={idx} {...trade} onRequest={() => navigate(`/trade/${idx}`)} />
+                      <TradeCard key={idx} {...trade} onRequest={() => navigate(`/trade/`)} />
                     ))}
                   </div>
                 </>

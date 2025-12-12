@@ -33,7 +33,7 @@ export default function TradeDetails() {
 
         <button
           className="group flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-primary transition-colors mb-8"
-          onClick={() => navigate("/dashboard")}
+          onClick={() => navigate("/dashboard", { state: { activeTab: "matches" } })}
         >
           <div className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center group-hover:border-primary/50 transition-colors shadow-sm">
             <ArrowLeft size={16} />

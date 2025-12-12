@@ -191,6 +191,7 @@ export default function Profile() {
                     className="bg-slate-200/50 rounded-lg p-1.5 pr-3 flex items-center justify-between group hover:bg-slate-200 transition-colors"
                   >
                     <span className="px-3 text-slate-700 font-bold text-sm">{skill.name}</span>
+                    <span className="px-3 text-slate-700 font-bold text-sm">Credit: {skill.credit}</span>
                     <div className="flex items-center gap-3">
                       <span
                         className={`px-3 py-1 rounded-full text-[10px] font-extrabold uppercase border ${

@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
 import { ArrowLeft, Video, Calendar, Clock, MessageSquare, Check, X, Star, Shield, Send } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 // Mock trade data
 const MOCK_TRADE = {
@@ -42,6 +43,7 @@ export default function TradePage() {
   const [trade] = useState(MOCK_TRADE)
   const [newMessage, setNewMessage] = useState("")
   const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const Navigate = useNavigate()
 
   const handleSendMessage = (e) => {
     e.preventDefault()
@@ -54,12 +56,15 @@ export default function TradePage() {
 
       <main className="max-w-[1000px] mx-auto px-6 py-8">
        
-        <Link to="/dashboard" className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-primary transition-colors mb-8 group">
+        <button 
+          className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-primary transition-colors mb-8 group"
+          onClick={() => Navigate("/dashboard", { state: { activeTab: "suggested" } })}
+        >
           <div className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center group-hover:border-primary/50 transition-colors shadow-sm">
             <ArrowLeft size={16} />
           </div>
           Back to Dashboard
-        </Link>
+        </button>
 
         <div className="grid md:grid-cols-3 gap-8">
 

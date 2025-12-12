@@ -139,7 +139,7 @@ export default function WalletScreen() {
                 <div className="flex gap-6 mt-8">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-emerald-400/20 flex items-center justify-center border border-emerald-400/30">
-                      <ArrowUpRight className="text-emerald-300" size={20} />
+                      <ArrowDownRight className="text-emerald-300" size={20} />
                     </div>
                     <div>
                       <p className="text-xs text-indigo-100 font-bold uppercase">Earned</p>
@@ -148,7 +148,7 @@ export default function WalletScreen() {
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-rose-400/20 flex items-center justify-center border border-rose-400/30">
-                      <ArrowDownLeft className="text-rose-300" size={20} />
+                      <ArrowUpRight className="text-rose-300" size={20} />
                     </div>
                     <div>
                       <p className="text-xs text-indigo-100 font-bold uppercase">Spent</p>
@@ -254,7 +254,7 @@ export default function WalletScreen() {
               </p>
               <button
                 className="w-full py-2.5 bg-amber-100 text-amber-900 font-bold rounded-lg hover:bg-amber-200 border border-amber-200 transition-colors text-sm"
-                onClick={() => navigate("/dashboard", { state: { activeTab: "suggested" } })}
+                onClick={() => navigate( { state: { activeTab: "suggested" } })}
               >
                 View Opportunities
               </button>
