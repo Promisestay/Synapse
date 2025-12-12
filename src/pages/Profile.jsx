@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react"
 import { Loader, Camera, Plus, X, ArrowRight } from "lucide-react"
-import { useAuthStore } from "../store/useAuthStore"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { axiosInstance } from "../lib/axios"
 import { toast } from "sonner"
@@ -8,27 +7,8 @@ import ConfirmModal from "../components/ConfirmModal"
 import AddTeachSkillModal from "../components/skills/AddTeachSkillModal"
 import AddLearnSkillModal from "../components/skills/AddLearnSkillModal"
 
-const SKILL_OPTIONS = [
-  "Python",
-  "JavaScript",
-  "React",
-  "Node.js",
-  "Java",
-  "C++",
-  "HTML",
-  "CSS",
-  "Figma",
-  "Graphic Design",
-  "Video Editing",
-  "Data Analytics",
-  "Marketing",
-  "Writing",
-  "French",
-  "Spanish",
-]
-
 export default function Profile() {
-  const { data, isLoading, refetch } = useQuery({
+  const { data, refetch } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
       const { data } = await axiosInstance.get("/user/profile")
@@ -70,11 +50,7 @@ export default function Profile() {
     },
   })
 
-  const {
-    data: skills,
-    refetch: refetchSkills,
-    isLoading: isSkillLoading,
-  } = useQuery({
+  const { data: skills, refetch: refetchSkills } = useQuery({
     queryKey: ["skills"],
     queryFn: async () => {
       const { data } = await axiosInstance.get("/user/skills")

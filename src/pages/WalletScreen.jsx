@@ -9,6 +9,7 @@ import {
   Plus,
   Loader,
   Lock,
+  ArrowDownRight,
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
@@ -31,6 +32,35 @@ const TRANSACTION_HISTORY = [
 
 const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_STRIPE_KEY)
 
+const formatter = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  weekday: "short",
+})
+
+function formatDate(date) {
+  const now = new Date()
+  const input = new Date(date)
+
+  const diffMs = now - input
+  const diffHours = diffMs / (1000 * 60 * 60)
+
+  if (diffHours < 24) {
+    let hours = input.getHours()
+    const minutes = input.getMinutes().toString().padStart(2, "0")
+    const ampm = hours >= 12 ? "PM" : "AM"
+    hours = hours % 12
+    hours = hours === 0 ? 12 : hours
+    return `${hours}:${minutes} ${ampm}`
+  } else {
+    const month = (input.getMonth() + 1).toString().padStart(2, "0")
+    const day = input.getDate().toString().padStart(2, "0")
+    const year = input.getFullYear()
+    return `${month}/${day}/${year}`
+  }
+}
+
 export default function WalletScreen() {
   const navigate = useNavigate()
   const [isAddFundsOpen, setIsAddFundsOpen] = useState(false)
@@ -43,10 +73,9 @@ export default function WalletScreen() {
   const credit = data?.credit ?? 0
 
   useEffect(() => {
-    const eventSource = new EventSource(
-      import.meta.env.VITE_API_BASE_URL + "/wallet/updates",
-      { withCredentials: true },
-    )
+    const eventSource = new EventSource(import.meta.env.VITE_API_BASE_URL + "/wallet/updates", {
+      withCredentials: true,
+    })
 
     eventSource.onmessage = (e) => {
       //console.log(e.data)
@@ -143,6 +172,30 @@ export default function WalletScreen() {
                 <button className="text-sm font-bold text-primary hover:underline">View All</button>
               </div>
               <div className="divide-y divide-border">
+                {data?.deposits.map((txn) => (
+                  <div
+                    key={txn.id}
+                    className="p-5 flex items-center justify-between hover:bg-slate-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-emerald-100/50 text-emerald-600">
+                        <ArrowDownRight size={24} />
+                      </div>
+                      <div>
+                        <p className="font-bold text-foreground">Deposit</p>
+                        <p className="text-xs font-medium text-muted-foreground flex items-center gap-1 mt-1">
+                          <Clock size={12} /> {formatDate(txn.createdAt)}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-lg text-emerald-600">+{txn.amount}</p>
+                      <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200">
+                        Completed
+                      </span>
+                    </div>
+                  </div>
+                ))}
                 {TRANSACTION_HISTORY.map((txn) => (
                   <div
                     key={txn.id}
@@ -156,18 +209,13 @@ export default function WalletScreen() {
                             : "bg-rose-100/50 text-rose-600"
                         }`}
                       >
-                        {txn.type === "received" ? (
-                          <ArrowUpRight size={24} />
-                        ) : (
-                          <ArrowDownLeft size={24} />
-                        )}
+                        <ArrowDownRight size={24} />
                       </div>
                       <div>
-                        <p className="font-bold text-foreground">
-                          {txn.type === "received" ? "Received from" : "Sent to"} {txn.user}
-                        </p>
+                        <p className="font-bold text-foreground">{txn.user}</p>
                         <p className="text-xs font-medium text-muted-foreground flex items-center gap-1 mt-1">
-                          <Clock size={12} /> {txn.date}
+                          <Clock size={12} />
+                          {data ? formatDate(data.createdAt) : "..."}
                         </p>
                       </div>
                     </div>
