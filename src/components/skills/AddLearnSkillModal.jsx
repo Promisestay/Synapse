@@ -8,7 +8,7 @@ export default function AddLearnSkillModal({ isOpen, onClose, refetch }) {
     const [form, setForm] = useState({ name: "" })
     const { isPending, mutate } = useMutation({
         mutationFn: async (formData) => {
-            const { data } = await axiosInstance.post("/user/skills", formData)
+            const { data } = await axiosInstance.post("/user/learn", formData)
             return data
         },
         onSuccess: () => {
