@@ -8,42 +8,6 @@ import { getLearn, getSkills, getWalletDetails } from "../lib/queries"
 import { useQuery } from "@tanstack/react-query"
 import { axiosInstance } from "../lib/axios"
 
-const mockMatches = [
-  {
-    id: 1,
-    from: "Sarah Chen",
-    role: "UI/UX Designer",
-    score: 95,
-    teaches: "Figma",
-    wants: "Python",
-    avatar: "https://i.pravatar.cc/150?u=sarah",
-    credits: 15,
-    availableTime: "Mon, 4PM",
-  },
-  {
-    id: 2,
-    from: "Mike Ross",
-    role: "Law Student",
-    score: 88,
-    teaches: "Public Speaking",
-    wants: "Data Science",
-    avatar: "https://i.pravatar.cc/150?u=mike",
-    credits: 12,
-    availableTime: "Wed, 2PM",
-  },
-  {
-    id: 3,
-    from: "Jessica Pearson",
-    role: "MBA Student",
-    score: 82,
-    teaches: "Leadership",
-    wants: "React",
-    avatar: "https://i.pravatar.cc/150?u=jessica",
-    credits: 20,
-    availableTime: "Fri, 10AM",
-  },
-]
-
 export default function Dashboard() {
   const { authUser } = useAuthStore()
   const navigate = useNavigate()
@@ -68,6 +32,15 @@ export default function Dashboard() {
     },
   })
 
+  const { data: requests } = useQuery({
+    queryKey: ["requests"],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get("/trade/requests")
+      return data
+    },
+  })
+
+  // Fetch all requests and compare to show requested
   return (
     <main className="min-h-[calc(100vh-80px)] py-10 bg-background font-sans">
       <div className="container max-w-7xl mx-auto px-6">
@@ -194,12 +167,15 @@ export default function Dashboard() {
         <div className="min-h-[400px]">
           {activeTab === "matches" && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              {mockMatches.length > 0 ? (
+              {requests && requests.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                  {mockMatches.map((match) => (
+                  {requests.map((match) => (
                     <MatchCard
                       key={match.id}
-                      match={match}
+                      senderName={match.sender.fullName}
+                      learning={match.learning.name}
+                      teaching={match.skill.name}
+                      credits={match.skill.credit}
                       onAccept={() => navigate(`/trade/${match.id}`)}
                       onDecline={() => alert("Trade declined")}
                     />
@@ -239,6 +215,9 @@ export default function Dashboard() {
                         teachSkill={suggestion.name}
                         learnSkill={suggestion.learning}
                         credits={suggestion.credit}
+                        skillId={suggestion.id}
+                        learnId={suggestion.learningId}
+                        receiverId={suggestion.user.id}
                         time={"Fri, 10AM"}
                         onRequest={() => navigate(`/trade`)}
                       />

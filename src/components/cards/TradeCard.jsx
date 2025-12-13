@@ -1,14 +1,30 @@
 import { ArrowRight, Star, Clock } from "lucide-react"
+import { useMutation } from "@tanstack/react-query"
+import { axiosInstance } from "../../lib/axios"
+import { toast } from "sonner"
 
 export default function TradeCard({
+  skillId,
+  learnId,
+  receiverId,
   name,
   rating,
   teachSkill,
   learnSkill,
   credits,
   time,
-  onRequest,
 }) {
+  const { isPending, mutate } = useMutation({
+    mutationFn: async (data) => {
+      await axiosInstance.post("/trade/request", data)
+    },
+    onSuccess: () => {
+      toast.success("Request sent successfully")
+    },
+    onError: () => {
+      toast.error("Something went wrong")
+    },
+  })
   return (
     <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden transition-all duration-300 flex flex-col h-full hover:-translate-y-1 hover:shadow-lg group">
       <div className="p-5 flex justify-between items-start bg-slate-50/50">
@@ -66,10 +82,11 @@ export default function TradeCard({
 
       <div className="p-4 bg-slate-50/50">
         <button
-          className="w-full bg-primary text-primary-foreground py-2.5 rounded-xl font-semibold shadow-sm shadow-indigo-500/20 hover:bg-primary-dark transition-all active:scale-[0.98]"
-          onClick={onRequest}
+          disabled={isPending}
+          className="w-full bg-primary text-primary-foreground py-2.5 rounded-xl font-semibold shadow-sm shadow-indigo-500/20 hover:bg-primary-dark transition-all active:scale-[0.98] disabled:opacity-60"
+          onClick={() => mutate({ skillId, learnId, receiverId })}
         >
-          Request Trade
+          {isPending ? "Loading..." : "Request Trade"}
         </button>
       </div>
     </div>
