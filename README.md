@@ -1,16 +1,46 @@
-# React + Vite
+Synapse
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A peer-to-peer skill sharing platform that empowers students to teach, learn, and earn through knowledge exchange.
 
-Currently, two official plugins are available:
+Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Synapse connects students who want to share their expertise with peers eager to learn. Whether you're a coding wizard, language enthusiast, or creative expert, Synapse helps you monetize your skills or trade them for knowledge you've been wanting to acquire.
 
-## React Compiler
+How It Works
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Teach & Earn
+- Share your skills with fellow students
+- Earn credits for each session you teach
+- Convert accumulated credits into real money
 
-## Expanding the ESLint configuration
+Learn & Exchange
+- Browse available skills and find your perfect teacher
+- Pay with credits or arrange reciprocal learning
+- Trade your expertise for skills you want to learn
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Key Features
+
+- Credit System: Earn credits by teaching, spend them on learning, or cash out
+- Reciprocal Learning: Arrange skill swaps with other students without spending credits
+- Student-Focused: Built by students, for students
+- Flexible Exchange: Choose between monetary compensation or knowledge trade
+
+Tech Stack
+
+- Frontend: React Native, HTML, Tailwind CSS
+- Backend: Node.js, Express.js
+- Deployment: Netlify
+
+Live Demo
+
+🌐 [Visit Synapse](http://synapseskilltrade.netlify.app)
+
+Contributing
+
+Contributions, issues, and feature requests are welcome! Feel free to check the issues page or submit a pull request.
+
+---
+
+Empowering students to share knowledge, one skill at a time.
+
+This version removes the license section and team section since GitHub automatically shows contributors. The link is now included. Does this work for your project?
