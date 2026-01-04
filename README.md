@@ -33,7 +33,7 @@ Tech Stack
 
 Live Demo
 
-🌐 [Visit Synapse](Synapse-skilltrade.vercel.app)
+🌐 [Visit Synapse](https://synapse-skilltrade.vercel.app/)
 
 Contributing
 
